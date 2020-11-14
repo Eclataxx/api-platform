@@ -49,6 +49,11 @@ class Address
      */
     private $additionalStreetAddress;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="address")
+     */
+    private $associatedUser;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -122,6 +127,18 @@ class Address
     public function setAdditionalStreetAddress(?string $additionalStreetAddress): self
     {
         $this->additionalStreetAddress = $additionalStreetAddress;
+
+        return $this;
+    }
+
+    public function getAssociatedUser(): ?User
+    {
+        return $this->associatedUser;
+    }
+
+    public function setAssociatedUser(?User $associatedUser): self
+    {
+        $this->associatedUser = $associatedUser;
 
         return $this;
     }

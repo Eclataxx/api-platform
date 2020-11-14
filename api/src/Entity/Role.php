@@ -24,6 +24,11 @@ class Role
      */
     private $name;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="role")
+     */
+    private $associatedUser;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -37,6 +42,18 @@ class Role
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getAssociatedUser(): ?User
+    {
+        return $this->associatedUser;
+    }
+
+    public function setAssociatedUser(?User $associatedUser): self
+    {
+        $this->associatedUser = $associatedUser;
 
         return $this;
     }
