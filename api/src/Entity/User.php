@@ -68,12 +68,12 @@ class User implements UserInterface
     private $orderId;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="submittedBy")
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="submittedBy")
      */
     private $products;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="validatedBy")
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="validatedBy")
      */
     private $validatedProduct;
 
