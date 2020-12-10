@@ -47,20 +47,18 @@ class Product
     private $orders;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="products")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="products")
      */
     private $submittedBy;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="validatedProduct")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="validatedProduct")
      */
     private $validatedBy;
 
     public function __construct()
     {
         $this->orders = new ArrayCollection();
-        $this->submittedBy = new ArrayCollection();
-        $this->validatedBy = new ArrayCollection();
     }
 
     public function getId(): ?int
