@@ -16,6 +16,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+    public const ROLE_SELLER = 'ROLE_SELLER';
+    public const ROLE_USER = 'ROLE_USER';
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -45,7 +48,7 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $birthdate;
 
@@ -60,11 +63,6 @@ class User implements UserInterface
     private $address;
 
     /**
-     * @ORM\OneToMany(targetEntity=Role::class, mappedBy="associatedUser")
-     */
-    private $role;
-
-    /**
      * @ORM\OneToMany(targetEntity=Order::class, mappedBy="associatedUser", orphanRemoval=true)
      */
     private $orderId;
@@ -77,13 +75,21 @@ class User implements UserInterface
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="validatedBy")
      */
-    private $validatedProduct;
+    private $validatedProducts;
 
-    public function __construct()
+    public function __construct($username = NULL, $email = NULL, $password = NULL, $birthdate = NULL, $phoneNumber = NULL)
     {
         $this->address = new ArrayCollection();
-        $this->role = new ArrayCollection();
         $this->orderId = new ArrayCollection();
+        $this->products = new ArrayCollection();
+        $this->validatedProducts = new ArrayCollection();
+        $this->roles = [self::ROLE_USER];
+
+        $this->username = $username;
+        $this->email = $email;
+        $this->password = $password;
+        $this->birthdate = $birthdate;
+        $this->phoneNumber = $phoneNumber;
     }
 
     public function getId(): ?int
@@ -114,15 +120,20 @@ class User implements UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+        return $this;
+    }
+
+    public function addRole(string $role): self
+    {
+        if (!in_array($role, $this->roles)) {
+            $this->roles[] = $role;
+        }
 
         return $this;
     }
@@ -227,37 +238,6 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|Role[]
-     */
-    public function getRole(): Collection
-    {
-        return $this->role;
-    }
-
-    public function addRole(Role $role): self
-    {
-        if (!$this->role->contains($role)) {
-            $this->role[] = $role;
-            $role->setAssociatedUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRole(Role $role): self
-    {
-        if ($this->role->contains($role)) {
-            $this->role->removeElement($role);
-            // set the owning side to null (unless already changed)
-            if ($role->getAssociatedUser() === $this) {
-                $role->setAssociatedUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Order[]
      */
     public function getOrderId(): Collection
@@ -288,26 +268,34 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getProducts(): ?Product
+    public function getProducts(): Collection
     {
         return $this->products;
     }
 
-    public function setProducts(?Product $products): self
+    public function addProduct(Product $product): self
     {
-        $this->products = $products;
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+            $product->setSubmittedBy($this);
+        }
 
         return $this;
     }
 
-    public function getValidatedProduct(): ?Product
+    public function getValidatedProducts(): Collection
     {
-        return $this->validatedProduct;
+        return $this->validatedProducts;
     }
 
-    public function setValidatedProduct(?Product $validatedProduct): self
+    public function addValidatedProduct(Product $product): self
     {
-        $this->validatedProduct = $validatedProduct;
+        if (in_array(self::ROLE_ADMIN, $this->getRoles())) {
+            if (!$this->validatedProducts->contains($product)) {
+                $this->validatedProducts[] = $product;
+                $product->setValidatedBy($this);
+            }
+        }
 
         return $this;
     }

@@ -56,9 +56,14 @@ class Product
      */
     private $validatedBy;
 
-    public function __construct()
+    public function __construct($name, $price, $stock, $status)
     {
-        $this->orders = new ArrayCollection();
+        $this->orders = new ArrayCollection([]);
+
+        $this->name = $name;
+        $this->price = $price;
+        $this->stock = $stock;
+        $this->status = $status;
     }
 
     public function getId(): ?int
@@ -150,26 +155,9 @@ class Product
         return $this->submittedBy;
     }
 
-    public function addSubmittedBy(User $submittedBy): self
+    public function setSubmittedBy(User $submittedBy): self
     {
-        if (!$this->submittedBy->contains($submittedBy)) {
-            $this->submittedBy[] = $submittedBy;
-            $submittedBy->setProducts($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSubmittedBy(User $submittedBy): self
-    {
-        if ($this->submittedBy->contains($submittedBy)) {
-            $this->submittedBy->removeElement($submittedBy);
-            // set the owning side to null (unless already changed)
-            if ($submittedBy->getProducts() === $this) {
-                $submittedBy->setProducts(null);
-            }
-        }
-
+        $this->submittedBy = $submittedBy;
         return $this;
     }
 
@@ -181,26 +169,9 @@ class Product
         return $this->validatedBy;
     }
 
-    public function addValidatedBy(User $validatedBy): self
+    public function setValidatedBy(User $validatedBy): self
     {
-        if (!$this->validatedBy->contains($validatedBy)) {
-            $this->validatedBy[] = $validatedBy;
-            $validatedBy->setValidatedProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeValidatedBy(User $validatedBy): self
-    {
-        if ($this->validatedBy->contains($validatedBy)) {
-            $this->validatedBy->removeElement($validatedBy);
-            // set the owning side to null (unless already changed)
-            if ($validatedBy->getValidatedProduct() === $this) {
-                $validatedBy->setValidatedProduct(null);
-            }
-        }
-
+        $this->validatedBy = $validatedBy;
         return $this;
     }
 }
