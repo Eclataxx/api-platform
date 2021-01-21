@@ -7,10 +7,27 @@ use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"product_get"}}
+ *          },
+ *          "post"
+ *     },
+ *     itemOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"product_get"}}
+ *          },
+ *          "delete",
+ *          "put",
+ *          "patch"
+ *     },
+ * )
  * @ORM\Entity(repositoryClass=ProductRepository::class)
+ *
  */
 class Product
 {
@@ -18,49 +35,64 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"product_get"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"product_get", "order_get"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"product_get", "order_get"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"product_get"})
      */
     private $stock;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"product_get"})
      */
     private $status;
 
     /**
      * @ORM\ManyToMany(targetEntity=Order::class, mappedBy="products")
+     * @Groups({"product_get"})
      */
     private $orders;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="products")
+     * @Groups({"product_get", "order_get"})
      */
     private $submittedBy;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="validatedProduct")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="validatedProducts")
+     * @Groups({"product_get"})
      */
     private $validatedBy;
 
-    public function __construct($name, $price, $stock, $status)
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"product_get"})
+     */
+    private $description;
+
+    public function __construct($name, $description, $price, $stock, $status)
     {
         $this->orders = new ArrayCollection([]);
 
         $this->name = $name;
+        $this->description = $description;
         $this->price = $price;
         $this->stock = $stock;
         $this->status = $status;
@@ -148,9 +180,9 @@ class Product
     }
 
     /**
-     * @return Collection|User[]
+     * @return User
      */
-    public function getSubmittedBy(): Collection
+    public function getSubmittedBy(): User
     {
         return $this->submittedBy;
     }
@@ -162,9 +194,9 @@ class Product
     }
 
     /**
-     * @return Collection|User[]
+     * @return User
      */
-    public function getValidatedBy(): Collection
+    public function getValidatedBy(): User
     {
         return $this->validatedBy;
     }
@@ -172,6 +204,18 @@ class Product
     public function setValidatedBy(User $validatedBy): self
     {
         $this->validatedBy = $validatedBy;
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
         return $this;
     }
 }

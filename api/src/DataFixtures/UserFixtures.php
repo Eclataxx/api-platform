@@ -11,10 +11,10 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserFixtures extends Fixture implements OrderedFixtureInterface
 {
-    public const USER_REFERENCE_1 = 'user-1';
-    public const USER_REFERENCE_2 = 'user-2';
-    public const USER_REFERENCE_3 = 'user-3';
-    public const USER_REFERENCE_4 = 'user-4';
+    public const USER_REFERENCE_1 = 'user1';
+    public const USER_REFERENCE_2 = 'user2';
+    public const USER_REFERENCE_3 = 'user3';
+    public const USER_REFERENCE_4 = 'user4';
 
     private $passwordEncoder;
 
