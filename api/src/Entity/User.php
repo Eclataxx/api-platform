@@ -11,7 +11,22 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"user_get_collection"}}
+ *          },
+ *          "post"
+ *     },
+ *     itemOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"user_get_item"}}
+ *          },
+ *          "delete",
+ *          "put",
+ *          "patch"
+ *     },
+ * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
@@ -24,62 +39,74 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"user_get_collection", "user_get_item"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"product_get", "order_get"})
+     * @Groups({"product_get", "order_get", "user_get_collection", "user_get_item"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"user_get_item"})
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Groups({"user_get_item"})
      */
     private $password;
 
+    private $plainPassword;
+
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"user_get_collection", "user_get_item"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"user_get_item"})
      */
     private $birthdate;
 
     /**
      * @ORM\Column(type="string", length=16, nullable=true)
+     * @Groups({"user_get_item"})
      */
     private $phoneNumber;
 
     /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="associatedUser")
+     * @Groups({"user_get_item"})
      */
     private $address;
 
     /**
      * @ORM\OneToMany(targetEntity=Order::class, mappedBy="associatedUser", orphanRemoval=true)
+     * @Groups({"user_get_item"})
      */
     private $orderId;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="submittedBy")
+     * @Groups({"user_get_item"})
      */
     private $products;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="validatedBy")
+     * @Groups({"user_get_item"})
      */
     private $validatedProducts;
 
-    public function __construct($username = NULL, $email = NULL, $password = NULL, $birthdate = NULL, $phoneNumber = NULL)
+    public function __construct($username = NULL, $email = NULL, $plainPassword = NULL, $birthdate = NULL, $phoneNumber = NULL)
     {
         $this->address = new ArrayCollection();
         $this->orderId = new ArrayCollection();
@@ -89,7 +116,7 @@ class User implements UserInterface
 
         $this->username = $username;
         $this->email = $email;
-        $this->password = $password;
+        $this->plainPassword = $plainPassword;
         $this->birthdate = $birthdate;
         $this->phoneNumber = $phoneNumber;
     }
@@ -170,6 +197,17 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getPlainPassword(): string
+    {
+        return (string)$this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
     }
 
     public function getEmail(): ?string

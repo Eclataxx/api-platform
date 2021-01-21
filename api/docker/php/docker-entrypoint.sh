@@ -6,43 +6,38 @@ if [ "${1#-}" != "$1" ]; then
 	set -- php-fpm "$@"
 fi
 
-if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
-	PHP_INI_RECOMMENDED="$PHP_INI_DIR/php.ini-production"
-	if [ "$APP_ENV" != 'prod' ]; then
-		PHP_INI_RECOMMENDED="$PHP_INI_DIR/php.ini-development"
-	fi
-	ln -sf "$PHP_INI_RECOMMENDED" "$PHP_INI_DIR/php.ini"
-
+if [ "$1" = 'php-fpm' ] || [ "$1" = 'bin/console' ] || { [ "$1" = 'php' ] && [ "$2" = 'bin/console' ]; }; then
 	mkdir -p var/cache var/log
 	setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
 	setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var
 
-	if [ "$APP_ENV" != 'prod' ] && [ -f /certs/localCA.crt ]; then
-		ln -sf /certs/localCA.crt /usr/local/share/ca-certificates/localCA.crt
-		update-ca-certificates
+	if [ "$APP_ENV" != 'prod' ] && [ ! -f config/jwt/private.pem ]; then
+		jwt_passphrase=$(grep '^JWT_PASSPHRASE=' .env | cut -f 2 -d '=')
+		if ! echo "$jwt_passphrase" | openssl pkey -in config/jwt/private.pem -passin stdin -noout > /dev/null 2>&1; then
+			echo "Generating public / private keys for JWT"
+			mkdir -p config/jwt
+			echo "$jwt_passphrase" | openssl genpkey -out config/jwt/private.pem -pass stdin -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
+			echo "$jwt_passphrase" | openssl pkey -in config/jwt/private.pem -passin stdin -out config/jwt/public.pem -pubout
+			setfacl -R -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt
+			setfacl -dR -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt
+		fi
 	fi
 
 	if [ "$APP_ENV" != 'prod' ]; then
-		composer install --prefer-dist --no-progress --no-suggest --no-interaction
+		composer install --prefer-dist --no-progress --no-interaction
 	fi
 
 	echo "Waiting for db to be ready..."
-	ATTEMPTS_LEFT_TO_REACH_DATABASE=60
-	until [ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ] || bin/console doctrine:query:sql "SELECT 1" > /dev/null 2>&1; do
+	until bin/console doctrine:query:sql "SELECT 1" > /dev/null 2>&1; do
 		sleep 1
-		ATTEMPTS_LEFT_TO_REACH_DATABASE=$((ATTEMPTS_LEFT_TO_REACH_DATABASE-1))
-		echo "Still waiting for db to be ready... Or maybe the db is not reachable. $ATTEMPTS_LEFT_TO_REACH_DATABASE attempts left"
 	done
 
-	if [ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ]; then
-		echo "The db is not up or not reachable"
-		exit 1
-	else
-	   echo "The db is now ready and reachable"
-	fi
+	echo "Running migrations"
+	bin/console doctrine:migrations:migrate --no-interaction
 
-	if ls -A migrations/*.php > /dev/null 2>&1; then
-		bin/console doctrine:migrations:migrate --no-interaction
+	if [ "$APP_ENV" != 'prod' ]; then
+		echo "Load fixtures"
+		bin/console hautelook:fixtures:load --no-interaction
 	fi
 fi
 
