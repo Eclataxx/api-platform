@@ -30,10 +30,10 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 
     public function load(ObjectManager $manager)
     {
-        $user_1 = new User('Tom', 'tom@gmail.com', 'tom', NULL, NULL);
-        $user_2 = new User('Thomas', 'thomas@gmail.com', 'thomas', NULL, NULL);
-        $user_3 = new User('Pierre', 'pierre@gmail.com', 'pierre', NULL, NULL);
-        $user_4 = new User('Basile', 'basile@gmail.com', 'basile', NULL, NULL);
+        $user_1 = new User('Tom', 'tom@gmail.com', 1,'tom', NULL, NULL);
+        $user_2 = new User('Thomas', 'thomas@gmail.com', 1,'thomas', NULL, NULL);
+        $user_3 = new User('Pierre', 'pierre@gmail.com', 1,'pierre', NULL, NULL);
+        $user_4 = new User('Basile', 'basile@gmail.com', 1,'basile', NULL, NULL);
 
         $user_1->addRole('ROLE_ADMIN');
         $user_2->addRole('ROLE_SELLER');

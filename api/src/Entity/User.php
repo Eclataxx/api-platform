@@ -106,7 +106,12 @@ class User implements UserInterface
      */
     private $validatedProducts;
 
-    public function __construct($username = NULL, $email = NULL, $plainPassword = NULL, $birthdate = NULL, $phoneNumber = NULL)
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $gender;
+
+    public function __construct($username = NULL, $email = NULL, $gender = 0, $plainPassword = NULL, $birthdate = NULL, $phoneNumber = NULL)
     {
         $this->address = new ArrayCollection();
         $this->orderId = new ArrayCollection();
@@ -116,6 +121,7 @@ class User implements UserInterface
 
         $this->username = $username;
         $this->email = $email;
+        $this->gender = $gender;
         $this->plainPassword = $plainPassword;
         $this->birthdate = $birthdate;
         $this->phoneNumber = $phoneNumber;
@@ -336,6 +342,18 @@ class User implements UserInterface
                 $product->setValidatedBy($this);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?int
+    {
+        return $this->gender;
+    }
+
+    public function setGender(int $gender): self
+    {
+        $this->gender = $gender;
 
         return $this;
     }
