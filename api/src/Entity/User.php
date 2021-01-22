@@ -9,6 +9,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ApiResource(
@@ -20,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     itemOperations={
  *          "get"={
- *              "normalization_context"={"groups"={"user_get_item"}}
+ *              "normalization_context"={"groups"={"user_get_item"}, "enable_max_depth"=true}
  *          },
  *          "delete",
  *          "put",
@@ -40,18 +41,21 @@ class User implements UserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({"user_get_collection", "user_get_item"})
+     * @MaxDepth(1)
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Groups({"product_get", "order_get", "user_get_collection", "user_get_item"})
+     * @MaxDepth(2)
      */
     private $username;
 
     /**
      * @ORM\Column(type="json")
      * @Groups({"user_get_item"})
+     * @MaxDepth(1)
      */
     private $roles = [];
 
@@ -59,6 +63,7 @@ class User implements UserInterface
      * @var string The hashed password
      * @ORM\Column(type="string")
      * @Groups({"user_get_item"})
+     * @MaxDepth(1)
      */
     private $password;
 
@@ -67,54 +72,62 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"user_get_collection", "user_get_item"})
+     * @MaxDepth(1)
      */
     private $email;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"user_get_item"})
+     * @MaxDepth(1)
      */
     private $birthdate;
 
     /**
      * @ORM\Column(type="string", length=16, nullable=true)
      * @Groups({"user_get_item"})
+     * @MaxDepth(1)
      */
     private $phoneNumber;
 
     /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="associatedUser")
      * @Groups({"user_get_item"})
+     * @MaxDepth(1)
      */
     private $address;
 
     /**
      * @ORM\OneToMany(targetEntity=Order::class, mappedBy="associatedUser", orphanRemoval=true)
      * @Groups({"user_get_item"})
+     * @MaxDepth(1)
      */
-    private $orderId;
+    private $orders;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="submittedBy")
      * @Groups({"user_get_item"})
+     * @MaxDepth(1)
      */
     private $products;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="validatedBy")
      * @Groups({"user_get_item"})
+     * @MaxDepth(1)
      */
     private $validatedProducts;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @MaxDepth(1)
      */
     private $gender;
 
     public function __construct($username = NULL, $email = NULL, $gender = 0, $plainPassword = NULL, $birthdate = NULL, $phoneNumber = NULL)
     {
         $this->address = new ArrayCollection();
-        $this->orderId = new ArrayCollection();
+        $this->orders = new ArrayCollection();
         $this->products = new ArrayCollection();
         $this->validatedProducts = new ArrayCollection();
         $this->roles = [self::ROLE_USER];
@@ -286,28 +299,28 @@ class User implements UserInterface
     /**
      * @return Collection|Order[]
      */
-    public function getOrderId(): Collection
+    public function getOrders(): Collection
     {
-        return $this->orderId;
+        return $this->orders;
     }
 
-    public function addOrderId(Order $orderId): self
+    public function addOrder(Order $order): self
     {
-        if (!$this->orderId->contains($orderId)) {
-            $this->orderId[] = $orderId;
-            $orderId->setAssociatedUser($this);
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setAssociatedUser($this);
         }
 
         return $this;
     }
 
-    public function removeOrderId(Order $orderId): self
+    public function removeOrder(Order $order): self
     {
-        if ($this->orderId->contains($orderId)) {
-            $this->orderId->removeElement($orderId);
+        if ($this->orders->contains($order)) {
+            $this->orders->removeElement($order);
             // set the owning side to null (unless already changed)
-            if ($orderId->getAssociatedUser() === $this) {
-                $orderId->setAssociatedUser(null);
+            if ($order->getAssociatedUser() === $this) {
+                $order->setAssociatedUser(null);
             }
         }
 

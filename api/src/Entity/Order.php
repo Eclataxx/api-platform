@@ -36,30 +36,30 @@ class Order
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"order_get"})
+     * @Groups({"order_get", "user_get_item"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"order_get"})
+     * @Groups({"order_get", "user_get_item"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"order_get"})
+     * @Groups({"order_get", "user_get_item"})
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"order_get"})
+     * @Groups({"order_get", "user_get_item"})
      */
     private $status;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orderId")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orders")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"order_get"})
      */
@@ -67,7 +67,7 @@ class Order
 
     /**
      * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="orders")
-     * @Groups({"order_get"})
+     * @Groups({"order_get", "user_get_item"})
      */
     private $products;
 

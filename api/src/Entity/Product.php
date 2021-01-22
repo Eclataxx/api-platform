@@ -25,6 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "put",
  *          "patch"
  *     },
+ *
  * )
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  *
@@ -35,19 +36,19 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"product_get"})
+     * @Groups({"product_get", "user_get_item"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"product_get", "order_get"})
+     * @Groups({"product_get", "order_get", "user_get_item"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"product_get", "order_get"})
+     * @Groups({"product_get", "order_get", "user_get_item"})
      */
     private $price;
 
@@ -71,7 +72,7 @@ class Product
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="products")
-     * @Groups({"product_get", "order_get"})
+     * @Groups({"product_get", "order_get", "user_get_item"})
      */
     private $submittedBy;
 
