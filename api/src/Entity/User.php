@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Entity\Cart;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -124,6 +125,13 @@ class User implements UserInterface
      */
     private $gender;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Cart::class, inversedBy="relatedUser", cascade={"persist", "remove"})
+     * @Groups({"user_get_item"})
+     * @MaxDepth(1)
+     */
+    private $cart;
+
     public function __construct($username = NULL, $email = NULL, $gender = 0, $plainPassword = NULL, $birthdate = NULL, $phoneNumber = NULL)
     {
         $this->address = new ArrayCollection();
@@ -131,6 +139,7 @@ class User implements UserInterface
         $this->products = new ArrayCollection();
         $this->validatedProducts = new ArrayCollection();
         $this->roles = [self::ROLE_USER];
+        $this->setCart(new Cart());
 
         $this->username = $username;
         $this->email = $email;
@@ -367,6 +376,18 @@ class User implements UserInterface
     public function setGender(int $gender): self
     {
         $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getCart(): ?Cart
+    {
+        return $this->cart;
+    }
+
+    public function setCart(Cart $cart): self
+    {
+        $this->cart = $cart;
 
         return $this;
     }

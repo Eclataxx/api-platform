@@ -53,12 +53,6 @@ class Product
     private $price;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Groups({"product_get"})
-     */
-    private $stock;
-
-    /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"product_get"})
      */
@@ -88,15 +82,20 @@ class Product
      */
     private $description;
 
-    public function __construct($name, $description, $price, $stock, $status)
+    /**
+     * @ORM\ManyToMany(targetEntity=Cart::class, mappedBy="products")
+     */
+    private $carts;
+
+    public function __construct($name, $description, $price, $status)
     {
         $this->orders = new ArrayCollection([]);
 
         $this->name = $name;
         $this->description = $description;
         $this->price = $price;
-        $this->stock = $stock;
         $this->status = $status;
+        $this->carts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,18 +123,6 @@ class Product
     public function setPrice(int $price): self
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    public function getStock(): ?int
-    {
-        return $this->stock;
-    }
-
-    public function setStock(int $stock): self
-    {
-        $this->stock = $stock;
 
         return $this;
     }
@@ -216,6 +203,34 @@ class Product
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Cart[]
+     */
+    public function getCarts(): Collection
+    {
+        return $this->carts;
+    }
+
+    public function addCart(Cart $cart): self
+    {
+        if (!$this->carts->contains($cart)) {
+            $this->carts[] = $cart;
+            $cart->addProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCart(Cart $cart): self
+    {
+        if ($this->carts->contains($cart)) {
+            $this->carts->removeElement($cart);
+            $cart->removeProduct($this);
+        }
 
         return $this;
     }

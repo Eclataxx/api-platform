@@ -48,6 +48,9 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
         $user_1->addValidatedProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_3));
         $user_1->addValidatedProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_4));
 
+        $user_3->getCart()->addProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_3));
+        $user_3->getCart()->addProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_2));
+
         $manager->persist($user_1);
         $manager->persist($user_2);
         $manager->persist($user_3);
