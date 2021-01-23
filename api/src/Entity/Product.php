@@ -46,7 +46,7 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"product_get", "order_get", "user_get_item"})
+     * @Groups({"product_get", "order_get", "user_get_item", "user_get_collection"})
      */
     private $name;
 

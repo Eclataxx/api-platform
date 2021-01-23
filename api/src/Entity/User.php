@@ -55,7 +55,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"user_get_item"})
+     * @Groups({"user_get_item", "user_get_collection"})
      * @MaxDepth(1)
      */
     private $roles = [];
@@ -107,7 +107,7 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="submittedBy")
-     * @Groups({"user_get_item"})
+     * @Groups({"user_get_item", "user_get_collection"})
      * @MaxDepth(1)
      */
     private $products;
