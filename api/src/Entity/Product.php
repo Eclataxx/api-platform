@@ -18,7 +18,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          "get"={
  *              "normalization_context"={"groups"={"product_get"}}
  *          },
- *          "post"
+ *          "post"={"security"="is_granted('ROLE_SELLER')"}
  *     },
  *     itemOperations={
  *          "get"={
@@ -31,7 +31,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *
  * )
  * @ORM\Entity(repositoryClass=ProductRepository::class)
- * @ApiFilter(SearchFilter::class, properties={"name": "ipartial"})
+ * @ApiFilter(SearchFilter::class, properties={"name": "ipartial", "status": "exact"})
  *
  */
 class Product
