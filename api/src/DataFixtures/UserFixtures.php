@@ -25,7 +25,7 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): Int
     {
-        return 2;
+        return 1;
     }
 
     public function load(ObjectManager $manager)
@@ -37,19 +37,6 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 
         $user_1->addRole('ROLE_ADMIN');
         $user_2->addRole('ROLE_SELLER');
-
-        $user_2->addProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_1));
-        $user_2->addProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_2));
-        $user_2->addProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_3));
-        $user_2->addProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_4));
-
-        $user_1->addValidatedProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_1));
-        $user_1->addValidatedProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_2));
-        $user_1->addValidatedProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_3));
-        $user_1->addValidatedProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_4));
-
-        $user_3->getCart()->addProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_3));
-        $user_3->getCart()->addProduct($this->getReference(ProductFixtures::PRODUCT_REFERENCE_2));
 
         $manager->persist($user_1);
         $manager->persist($user_2);

@@ -58,7 +58,7 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"product_get"})
+     * @Groups({"product_get", "user_get_item"})
      */
     private $status;
 
@@ -82,7 +82,7 @@ class Product
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"product_get"})
+     * @Groups({"product_get", "user_get_item"})
      */
     private $description;
 
@@ -91,7 +91,7 @@ class Product
      */
     private $carts;
 
-    public function __construct($name, $description, $price, $status)
+    public function __construct($name, $description, $price, $status, $submittedBy)
     {
         $this->orders = new ArrayCollection([]);
 
@@ -100,6 +100,7 @@ class Product
         $this->price = $price;
         $this->status = $status;
         $this->carts = new ArrayCollection();
+        $this->submittedBy = $submittedBy;
     }
 
     public function getId(): ?int
@@ -186,9 +187,9 @@ class Product
     }
 
     /**
-     * @return User
+     * @return User | null
      */
-    public function getValidatedBy(): User
+    public function getValidatedBy(): ?User
     {
         return $this->validatedBy;
     }
