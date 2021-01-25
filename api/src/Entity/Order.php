@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-
 /**
  * @ApiResource(
  *     subresourceOperations={
@@ -77,7 +76,7 @@ class Order
      */
     private $products;
 
-    public function __construct($date, $status = '0')
+    public function __construct($date, $status = "ORDERED")
     {
         $this->products = new ArrayCollection();
         $this->date = $date;

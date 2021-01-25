@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use App\Controller\UserOrderCart;
 
 /**
  * @ApiResource(
@@ -28,7 +29,12 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          },
  *          "delete"={"security"="is_granted('ROLE_ADMIN')"},
  *          "put"={"security"="is_granted('ROLE_ADMIN')"},
- *          "patch"={"security"="is_granted('ROLE_ADMIN')"}
+ *          "patch"={"security"="is_granted('ROLE_ADMIN')"},
+ *          "post_user_order"={
+ *              "method"="POST",
+ *              "path"="/users/{id}/order",
+ *              "controller"=UserOrderCart::class
+ *          }
  *     },
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
