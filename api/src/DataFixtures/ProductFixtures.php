@@ -24,9 +24,9 @@ class ProductFixtures extends Fixture implements OrderedFixtureInterface
     {
         $loremIpsum = "Occaecat commodo sit incididunt ipsum ex deserunt laboris. Nulla velit nulla aliqua ut aliquip ut consectetur excepteur ea. Consequat nisi irure anim labore qui labore aute. Commodo qui ut irure veniam dolor enim enim consectetur velit occaecat cillum officia eu. Occaecat commodo sit incididunt ipsum ex deserunt laboris. Nulla velit nulla aliqua ut aliquip ut consectetur excepteur ea. Consequat nisi irure anim labore qui labore aute. Commodo qui ut irure veniam dolor enim enim consectetur velit occaecat cillum officia eu. Occaecat commodo sit incididunt ipsum ex deserunt laboris. Nulla velit nulla aliqua ut aliquip ut consectetur excepteur ea. Consequat nisi irure anim labore qui labore aute. Commodo qui ut irure veniam dolor enim enim consectetur velit occaecat cillum officia eu.";
         $user2 = $this->getReference(UserFixtures::USER_REFERENCE_2);
-        $product1 = new Product("iPhone X 64GB - Space Gray Unlocked", $loremIpsum, 299, "TO SELL", $user2);
-        $product2 = new Product("iPhone SE (2020)", $loremIpsum, 329, "TO SELL", $user2);
-        $product3 = new Product("Samsung Galaxy S8", $loremIpsum, 149, "TO SELL", $user2);
+        $product1 = new Product("iPhone X 64GB - Space Gray Unlocked", $loremIpsum, 299, "VERIFIED", $user2);
+        $product2 = new Product("iPhone SE (2020)", $loremIpsum, 329, "DENIED", $user2);
+        $product3 = new Product("Samsung Galaxy S8", $loremIpsum, 149, "VERIFIED", $user2);
         $product4 = new Product("Samsung Galaxy S7", $loremIpsum, 109, "TO REVIEW", $user2);
 
         $user1 = $this->getReference(UserFixtures::USER_REFERENCE_1);

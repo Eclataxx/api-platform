@@ -24,9 +24,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          "get"={
  *              "normalization_context"={"groups"={"user_get_item"}, "enable_max_depth"=true}
  *          },
- *          "delete",
- *          "put",
- *          "patch"
+ *          "delete"={"security"="is_granted('ROLE_ADMIN')"},
+ *          "put"={"security"="is_granted('ROLE_ADMIN')"},
+ *          "patch"={"security"="is_granted('ROLE_ADMIN')"}
  *     },
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
