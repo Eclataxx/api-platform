@@ -12,6 +12,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *     subresourceOperations={
+ *      "api_users_cart_get_subresource"={
+ *          "method"="GET",
+ *          "normalization_context"={"groups"={"user_get_cart"}}
+ *      }
+ *     },
  *     collectionOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"cart_get"}}
@@ -27,7 +33,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "patch"
  *     },
  * )
- * @ORM\Entity(repositoryClass=OrderRepository::class)
+ * @ORM\Entity(repositoryClass=CartRepository::class)
  * @ORM\Table(name="`cart`")
  */
 class Cart
@@ -36,25 +42,25 @@ class Cart
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"cart_get", "user_get_item"})
+     * @Groups({"cart_get", "user_get_item", "user_get_cart"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"cart_get", "user_get_item"})
+     * @Groups({"cart_get", "user_get_item", "user_get_cart"})
      */
     private $price;
 
     /**
      * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="carts")
-     * @Groups({"cart_get", "user_get_item"})
+     * @Groups({"cart_get", "user_get_item", "user_get_cart"})
      */
     private $products;
 
     /**
      * @ORM\OneToOne(targetEntity=User::class, mappedBy="cart", cascade={"persist", "remove"})
-     * @Groups({"cart_get"})
+     * @Groups({"cart_get", "user_get_cart"})
      */
     private $relatedUser;
 

@@ -7,6 +7,7 @@ use App\Entity\Cart;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -48,7 +49,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"product_get", "order_get", "user_get_collection", "user_get_item"})
+     * @Groups({"product_get", "order_get", "user_get_collection", "user_get_item", "user_get_orders", "user_get_cart"})
      * @MaxDepth(2)
      */
     private $username;
@@ -101,6 +102,7 @@ class User implements UserInterface
     /**
      * @ORM\OneToMany(targetEntity=Order::class, mappedBy="associatedUser", orphanRemoval=true)
      * @Groups({"user_get_item"})
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private $orders;
@@ -108,6 +110,7 @@ class User implements UserInterface
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="submittedBy")
      * @Groups({"user_get_item", "user_get_collection"})
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private $products;
@@ -115,6 +118,7 @@ class User implements UserInterface
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="validatedBy")
      * @Groups({"user_get_item"})
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private $validatedProducts;
@@ -128,6 +132,7 @@ class User implements UserInterface
     /**
      * @ORM\OneToOne(targetEntity=Cart::class, inversedBy="relatedUser", cascade={"persist", "remove"})
      * @Groups({"user_get_item"})
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private $cart;

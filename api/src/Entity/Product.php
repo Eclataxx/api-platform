@@ -40,19 +40,19 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"product_get", "user_get_item"})
+     * @Groups({"product_get", "user_get_item", "user_get_cart"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"product_get", "order_get", "user_get_item", "user_get_collection"})
+     * @Groups({"product_get", "order_get", "user_get_item", "user_get_collection", "user_get_orders", "user_get_cart"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"product_get", "order_get", "user_get_item"})
+     * @Groups({"product_get", "order_get", "user_get_item", "user_get_orders", "user_get_cart"})
      */
     private $price;
 
@@ -70,7 +70,7 @@ class Product
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="products")
-     * @Groups({"product_get", "order_get", "user_get_item"})
+     * @Groups({"product_get", "order_get", "user_get_item", "user_get_orders", "user_get_cart"})
      */
     private $submittedBy;
 

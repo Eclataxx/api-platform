@@ -12,6 +12,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *     subresourceOperations={
+ *      "api_users_orders_get_subresource"={
+ *          "method"="GET",
+ *          "normalization_context"={"groups"={"user_get_orders"}}
+ *      }
+ *     },
  *     collectionOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"order_get"}}
@@ -36,38 +42,38 @@ class Order
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"order_get", "user_get_item"})
+     * @Groups({"order_get", "user_get_item", "user_get_orders"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"order_get", "user_get_item"})
+     * @Groups({"order_get", "user_get_item", "user_get_orders"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"order_get", "user_get_item"})
+     * @Groups({"order_get", "user_get_item", "user_get_orders"})
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"order_get", "user_get_item"})
+     * @Groups({"order_get", "user_get_item", "user_get_orders"})
      */
     private $status;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orders")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"order_get"})
+     * @Groups({"order_get", "user_get_orders"})
      */
     private $associatedUser;
 
     /**
      * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="orders")
-     * @Groups({"order_get", "user_get_item"})
+     * @Groups({"order_get", "user_get_item", "user_get_orders"})
      */
     private $products;
 
