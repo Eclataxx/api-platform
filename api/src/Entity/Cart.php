@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-
 /**
  * @ApiResource(
  *     subresourceOperations={
@@ -22,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "get"={
  *              "normalization_context"={"groups"={"cart_get"}}
  *          },
- *          "post"
+ *          "post",
  *     },
  *     itemOperations={
  *          "get"={

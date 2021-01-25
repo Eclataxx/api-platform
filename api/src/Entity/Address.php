@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ApiResource()
@@ -16,43 +18,60 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"user_get_item"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"user_get_item"})
      */
-    private $City;
+    private $city;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"user_get_item"})
      */
-    private $Country;
+    private $country;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"user_get_item"})
      */
     private $postalCode;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"user_get_item"})
      */
     private $state;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"user_get_item"})
      */
     private $streetAddress;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"user_get_item"})
      */
     private $additionalStreetAddress;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="address")
+     * @ORM\OneToOne(targetEntity=User::class, mappedBy="address")
      */
     private $associatedUser;
+
+    public function __construct($city = "", $additionalStreetAddress = "", $country = "", $postalCode = "", $state = "", $streetAddress = "")
+    {
+        $this->city = $city;
+        $this->additionalStreetAddress = $additionalStreetAddress;
+        $this->country = $country;
+        $this->postalCode = $postalCode;
+        $this->state = $state;
+        $this->streetAddress = $streetAddress;
+    }
 
     public function getId(): ?int
     {
@@ -61,24 +80,24 @@ class Address
 
     public function getCity(): ?string
     {
-        return $this->City;
+        return $this->city;
     }
 
-    public function setCity(string $City): self
+    public function setCity(string $city): self
     {
-        $this->City = $City;
+        $this->city = $city;
 
         return $this;
     }
 
     public function getCountry(): ?string
     {
-        return $this->Country;
+        return $this->country;
     }
 
-    public function setCountry(string $Country): self
+    public function setCountry(string $country): self
     {
-        $this->Country = $Country;
+        $this->country = $country;
 
         return $this;
     }

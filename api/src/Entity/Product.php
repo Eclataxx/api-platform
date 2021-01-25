@@ -11,7 +11,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
-
 /**
  * @ApiResource(
  *     collectionOperations={
@@ -26,7 +25,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          },
  *          "delete",
  *          "put",
- *          "patch"
+ *          "patch",
  *     },
  *
  * )
@@ -88,6 +87,7 @@ class Product
 
     /**
      * @ORM\ManyToMany(targetEntity=Cart::class, mappedBy="products")
+     * @Groups({"product_get"})
      */
     private $carts;
 

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use App\Entity\Cart;
+use App\Entity\Address;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -93,7 +94,7 @@ class User implements UserInterface
     private $phoneNumber;
 
     /**
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="associatedUser")
+     * @ORM\OneToOne(targetEntity=Address::class, inversedBy="associatedUser", cascade={"persist", "remove"})
      * @Groups({"user_get_item"})
      * @MaxDepth(1)
      */
@@ -145,6 +146,7 @@ class User implements UserInterface
         $this->validatedProducts = new ArrayCollection();
         $this->roles = [self::ROLE_USER];
         $this->setCart(new Cart());
+        $this->setAddress(new Address());
 
         $this->username = $username;
         $this->email = $email;
@@ -280,32 +282,16 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|Address[]
+     * @return Address || null
      */
-    public function getAddress(): Collection
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
 
-    public function addAddress(Address $address): self
+    public function setAddress(Address $address): self
     {
-        if (!$this->address->contains($address)) {
-            $this->address[] = $address;
-            $address->setAssociatedUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAddress(Address $address): self
-    {
-        if ($this->address->contains($address)) {
-            $this->address->removeElement($address);
-            // set the owning side to null (unless already changed)
-            if ($address->getAssociatedUser() === $this) {
-                $address->setAssociatedUser(null);
-            }
-        }
+        $this->address = $address;
 
         return $this;
     }
