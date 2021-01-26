@@ -86,20 +86,6 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"user_get_item"})
-     * @MaxDepth(1)
-     */
-    private $birthdate;
-
-    /**
-     * @ORM\Column(type="string", length=16, nullable=true)
-     * @Groups({"user_get_item"})
-     * @MaxDepth(1)
-     */
-    private $phoneNumber;
-
-    /**
      * @ORM\OneToOne(targetEntity=Address::class, inversedBy="associatedUser", cascade={"persist", "remove"})
      * @Groups({"user_get_item"})
      * @MaxDepth(1)
@@ -130,11 +116,6 @@ class User implements UserInterface
      */
     private $validatedProducts;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @MaxDepth(1)
-     */
-    private $gender;
 
     /**
      * @ORM\OneToOne(targetEntity=Cart::class, inversedBy="relatedUser", cascade={"persist", "remove"})
@@ -144,7 +125,7 @@ class User implements UserInterface
      */
     private $cart;
 
-    public function __construct($username = NULL, $email = NULL, $gender = 0, $plainPassword = NULL, $birthdate = NULL, $phoneNumber = NULL)
+    public function __construct($username = NULL, $email = NULL, $plainPassword = NULL)
     {
         $this->address = new ArrayCollection();
         $this->orders = new ArrayCollection();
@@ -156,10 +137,7 @@ class User implements UserInterface
 
         $this->username = $username;
         $this->email = $email;
-        $this->gender = $gender;
         $this->plainPassword = $plainPassword;
-        $this->birthdate = $birthdate;
-        $this->phoneNumber = $phoneNumber;
     }
 
     public function getId(): ?int
@@ -263,30 +241,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getBirthdate(): ?\DateTimeInterface
-    {
-        return $this->birthdate;
-    }
-
-    public function setBirthdate(\DateTimeInterface $birthdate): self
-    {
-        $this->birthdate = $birthdate;
-
-        return $this;
-    }
-
-    public function getPhoneNumber(): ?string
-    {
-        return $this->phoneNumber;
-    }
-
-    public function setPhoneNumber(?string $phoneNumber): self
-    {
-        $this->phoneNumber = $phoneNumber;
-
-        return $this;
-    }
-
     /**
      * @return Address || null
      */
@@ -361,18 +315,6 @@ class User implements UserInterface
                 $product->setValidatedBy($this);
             }
         }
-
-        return $this;
-    }
-
-    public function getGender(): ?int
-    {
-        return $this->gender;
-    }
-
-    public function setGender(int $gender): self
-    {
-        $this->gender = $gender;
 
         return $this;
     }
