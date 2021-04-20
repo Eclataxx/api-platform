@@ -1,0 +1,8 @@
+App\Entity\Product:
+    product_{1..20}:
+        name: <name()>
+        description: <sentence(10)>
+        price: <randomNumber(3)>
+        status: <status()>
+        submittedBy: '@user_*'
+        validatedBy: '@user_*'

@@ -76,11 +76,9 @@ class Order
      */
     private $products;
 
-    public function __construct($date, $status = "ORDERED")
+    public function __construct()
     {
         $this->products = new ArrayCollection();
-        $this->date = $date;
-        $this->status = $status;
     }
 
     public function getId(): ?int

@@ -91,16 +91,10 @@ class Product
      */
     private $carts;
 
-    public function __construct($name, $description, $price, $status, $submittedBy)
+    public function __construct()
     {
-        $this->orders = new ArrayCollection([]);
-
-        $this->name = $name;
-        $this->description = $description;
-        $this->price = $price;
-        $this->status = $status;
+        $this->orders = new ArrayCollection();
         $this->carts = new ArrayCollection();
-        $this->submittedBy = $submittedBy;
     }
 
     public function getId(): ?int

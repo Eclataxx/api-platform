@@ -63,16 +63,6 @@ class Address
      */
     private $associatedUser;
 
-    public function __construct($city = "", $additionalStreetAddress = "", $country = "", $postalCode = "", $state = "", $streetAddress = "")
-    {
-        $this->city = $city;
-        $this->additionalStreetAddress = $additionalStreetAddress;
-        $this->country = $country;
-        $this->postalCode = $postalCode;
-        $this->state = $state;
-        $this->streetAddress = $streetAddress;
-    }
-
     public function getId(): ?int
     {
         return $this->id;

@@ -1,0 +1,8 @@
+App\Entity\Order:
+    order_{1..10}:
+        price: 0
+        date: <dateTime()>
+        status: <orderStatus()>
+        associatedUser: '@user_<current()>'
+        products: ['@product_1']
+        
