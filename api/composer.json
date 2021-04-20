@@ -40,6 +40,10 @@
     },
     "require-dev": {
         "api-platform/schema-generator": "^2.2",
+        "behat/behat": "^3.8",
+        "behat/mink-extension": "^2.3",
+        "behatch/contexts": "^3.3",
+        "friends-of-behat/symfony-extension": "^2.0",
         "hautelook/alice-bundle": "^2.9",
         "symfony/browser-kit": "^5.1",
         "symfony/css-selector": "^5.1",
