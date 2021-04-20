@@ -39,7 +39,7 @@ final class RestContext implements Context
     }
 
     /**
-     * @When /^I request "(GET|PUT|POST|PATCH|DELETE) ([^"]*)"$/
+     * @When I request :method :path
      */
     public function iSendARequestTo($method, $path)
     {
@@ -54,7 +54,7 @@ final class RestContext implements Context
     }
 
     /**
-     * @Then /^the response status code should be (?P<code>\d+)$/
+     * @Then the response status code should be :statusCode
      */
     public function theResponseStatusCodeShouldBe($statusCode)
     {
