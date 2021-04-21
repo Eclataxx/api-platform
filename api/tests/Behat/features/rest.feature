@@ -19,3 +19,23 @@ Feature: REST
     Scenario: Get restricted data without JWT
         When I request "GET" "/users/9999"
         Then the response status code should be 401
+
+    Scenario: Insert empty user
+      When I have The Payload
+          """
+          {}
+          """
+      When I request "POST" "/users"
+      Then the response status code should be 500
+
+    Scenario: Insert existing user
+      When I have The Payload
+          """
+          {
+            "username": "test1",
+            "password": "test",
+            "email": "test1@gmail.com"
+          }
+          """
+      When I request "POST" "/users"
+      Then the response status code should be 500
