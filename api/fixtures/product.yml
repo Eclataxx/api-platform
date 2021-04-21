@@ -4,5 +4,5 @@ App\Entity\Product:
         description: <sentence(10)>
         price: <randomNumber(3)>
         status: <status()>
-        submittedBy: '@user_*'
-        validatedBy: '@user_*'
+        submittedBy: "@user_*"
+        validatedBy: "@user_*"

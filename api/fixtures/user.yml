@@ -3,5 +3,5 @@ App\Entity\User:
         username: <username()>
         email: <email()>
         password: <password()>
-        # address: "@address_*"
-        # cart: "@cart_*"
+        address: "@address_<current()>"
+        cart: "@cart_<current()>"

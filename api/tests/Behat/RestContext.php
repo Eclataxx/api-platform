@@ -63,7 +63,7 @@ final class RestContext extends ApiTestCase implements Context
     /**
      * @When I set payload
      */
-    public function iSetPayload( PyStringNode $payload): void
+    public function iSetPayload(PyStringNode $payload): void
     {
         $this->lastPayload = $payload;
     }
@@ -74,8 +74,9 @@ final class RestContext extends ApiTestCase implements Context
      */
     public function theResponseStatusCodeShouldBe($statusCode)
     {
-        if ($this->lastResponse->getStatusCode() != $statusCode) {
-            throw new \RuntimeException('Status code error');
+        $statusCodeInResponse = $this->lastResponse->getStatusCode();
+        if ($statusCodeInResponse != $statusCode) {
+            throw new \RuntimeException("Status code error, status received was {$statusCodeInResponse}");
         }
     }
 }

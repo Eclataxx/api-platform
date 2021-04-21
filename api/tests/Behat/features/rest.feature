@@ -1,7 +1,11 @@
 Feature: REST
     Background:
         Given The fixtures files
-            | user |
+            | address |
+            | cart    |
+            | product |
+            | order   |
+            | user    |
 
     Scenario: Insert new user
         When I set payload
@@ -22,7 +26,7 @@ Feature: REST
         And The "content-type" header response should be "application/ld+json; charset=utf-8"
     #Then I add to reference whith "usersList"
 
-    Scenario: Get restricted data without JWT
+    Scenario: Get restricted data without authorization
         When I request "GET" "/users/9999"
         Then the response status code should be 401
 
