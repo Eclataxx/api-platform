@@ -3,6 +3,5 @@ App\Entity\Order:
         price: 0
         date: <dateTime()>
         status: <orderStatus()>
-        associatedUser: '@user_<current()>'
-        products: ['@product_1']
-        
+        associatedUser: "@user_*"
+        products: ["@product_1"]
