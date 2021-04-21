@@ -1,7 +1,7 @@
 App\Entity\User:
-  user_{1..20}:
-    username: <username()>
-    email: <email()>
-    password: <password()>
-    address: '@address_<current()>'
-    cart: '@cart_<current()>'
+    user_{1..20}:
+        username: <username()>
+        email: <email()>
+        password: <password()>
+        # address: "@address_*"
+        # cart: "@cart_*"

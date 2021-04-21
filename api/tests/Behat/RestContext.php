@@ -4,62 +4,78 @@ declare(strict_types=1);
 
 namespace App\Tests\Behat;
 
+use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
+use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Response;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use Fidry\AliceDataFixtures\Loader\PersisterLoader;
 use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class RestContext implements Context
+final class RestContext extends ApiTestCase implements Context
 {
     use RefreshDatabaseTrait;
+    use HeaderContextTrait;
+    use FixturesContextTrait;
 
     /** @var Response|null */
     private $lastResponse;
 
     /** @var PyStringNode */
-    private $payload;
+    private $lastPayload;
 
-    /** @var HttpClientInterface */
-    private $client;
+    /** @var PersisterLoader */
+    private $fixturesLoader;
 
     public function __construct(KernelInterface $kernel)
     {
-        $this->client = $kernel->getContainer()->get('test.api_platform.client');
-    }
-
-    /**
-     * @param PyStringNode $payload
-     * @When I have The Payload
-     */
-    public function iHavePayload(PyStringNode $payload)
-    {
-        $this->payload = $payload;
+        parent::__construct();
+        $this->fixturesLoader = $kernel->getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
     }
 
     /**
      * @When I request :method :path
      */
-    public function iSendARequestTo($method, $path)
+    public function iSendARequestTo(string $method, string $path): void
     {
-        $options = ['headers' => ['content-type' => 'application/ld+json']];
-
-        if ($this->payload) {
-            $options['body'] = $this->payload->getRaw();
-            $this->payload = null;
+        $options = ['headers' => $this->headers];
+        if ($this->lastPayload) {
+            $options['body'] = $this->lastPayload->getRaw();
         }
 
-        $this->lastResponse = $this->client->request($method, $path, $options);
+        $this->lastResponse = $this->createClient()->request($method, $path, $options);
     }
 
     /**
-     * @Then the response status code should be :statusCode
+     * PAS UTILE SI PAYLOAD
+     * @When I request :method :path with data
+     */
+    public function iSendARequestWithData(string $method, string $path, PyStringNode $parameters): void
+    {
+        $this->lastResponse = $this->createClient()->request($method, $path, [
+            'headers' => [
+                'content-type' => 'application/ld+json'
+            ],
+            'body' => $parameters->getRaw()
+        ]);
+    }
+
+    /**
+     * @When I set payload
+     */
+    public function iSetPayload( PyStringNode $payload): void
+    {
+        $this->lastPayload = $payload;
+    }
+
+    /**
+     * @param $statusCode
+     * @Then The response status code should be :statusCode
      */
     public function theResponseStatusCodeShouldBe($statusCode)
     {
         if ($this->lastResponse->getStatusCode() != $statusCode) {
-            throw new \RuntimeException('No response received');
+            throw new \RuntimeException('Status code error');
         }
     }
 }
