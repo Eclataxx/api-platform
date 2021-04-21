@@ -13,7 +13,7 @@ trait HeaderContextTrait
     /**
      * @param $headerName
      * @param $value
-     * @Given I set the :headerName header to be :value
+     * @Given I set the :headerName header to :value
      */
     public function iSetHeaderToBe($headerName, $value)
     {
