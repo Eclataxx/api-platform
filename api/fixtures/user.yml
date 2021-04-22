@@ -5,3 +5,10 @@ App\Entity\User:
         password: <password()>
         address: "@address_<current()>"
         cart: "@cart_<current()>"
+        
+    #user_custom:
+    #    username: "exist"
+    #    email: "iexist@myges.fr"
+    #    password: <password()>
+    #    address: "@address_custom"
+    #    cart: "@cart_custom"

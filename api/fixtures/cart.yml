@@ -3,3 +3,8 @@ App\Entity\Cart:
         price: 0
         products: ["@product_*", "@product_*", "@product_*"]
         relatedUser: "@user_<current()>"
+        
+    #cart_custom:
+    #    price: 0
+    #    products: ["@product_*", "@product_*", "@product_*"]
+    #    relatedUser: "@user_custom"
