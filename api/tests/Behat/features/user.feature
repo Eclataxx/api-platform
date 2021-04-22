@@ -1,11 +1,12 @@
 Feature: User
-    Background:
-        Given The fixtures files
-            | address |
-            | cart    |
-            | product |
-            | order   |
-            | user    |
+
+  Background:
+    Given The fixtures files
+      | address |
+      | cart    |
+      | product |
+      | order   |
+      | user    |
 
   Scenario: Insert new user and duplicate
     When I set payload
@@ -21,6 +22,7 @@ Feature: User
     When I request "POST" "/users"
     Then the response status code should be 500
 
+  @only
   Scenario: Insert empty user
     When I set payload
           """
@@ -30,49 +32,49 @@ Feature: User
     Then the response status code should be 500
 
   Scenario: Insert existing user
-        When I set payload
+    When I set payload
+            """
+            {
+                "username": "admin",
+                "password": "admin",
+                "email": "admin@gmail.com"
+            }
+            """
+    When I request "POST" "/users"
+    Then the response status code should be 500
+
+  Scenario: Insert wrong user - password
+    When I set payload
             """
             {
                 "username": "test1",
+                "email": "test1@gmail.com"
+            }
+            """
+    When I request "POST" "/users"
+    Then the response status code should be 500
+
+  Scenario: Insert wrong user - username
+    When I set payload
+            """
+            {
                 "password": "test",
                 "email": "test1@gmail.com"
             }
             """
-        When I request "POST" "/users"
-        Then the response status code should be 500
+    When I request "POST" "/users"
+    Then the response status code should be 500
 
-    Scenario: Insert wrong user - password
-        When I set payload
-            """
-            {
-                "username": "test1",
-                "email": "test1@gmail.com"
-            }
-            """
-        When I request "POST" "/users"
-        Then the response status code should be 500
-
-    Scenario: Insert wrong user - username
-        When I set payload
-            """
-            {
-                "password": "test",
-                "email": "test1@gmail.com"
-            }
-            """
-        When I request "POST" "/users"
-        Then the response status code should be 500
-
-    Scenario: Insert wrong user - email
-        When I set payload
+  Scenario: Insert wrong user - email
+    When I set payload
             """
             {
             "username": "test1",
             "password": "test",
             }
             """
-        When I request "POST" "/users"
-        Then the response status code should be 400
+    When I request "POST" "/users"
+    Then the response status code should be 400
 
   Scenario: Get list of users
     When I request "GET" "/users"
@@ -84,232 +86,172 @@ Feature: User
     When I request "GET" "/users/9999"
     Then the response status code should be 401
 
-  Scenario: Get list of users then get a single user as admin
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
+  Scenario: Get a single user as admin
     Given a user with role "Admin"
-    When I request "GET" a single data from "userList"
+    When I request "GET" "/users/{admin.id}"
+    And The "content-type" header response should be "application/ld+json; charset=utf-8"
     Then the response status code should be 200
 
-  Scenario: Get list of users then get a single user as user
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
+  Scenario: Get a single user as user
     Given a user with role "User"
-    When I request "GET" a single data from "userList"
-    Then the response status code should be 200
-
-  Scenario: Get list of users then get a single user as seller
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
-    Given a user with role "Seller"
-    When I request "GET" a single data from "userList"
-
-  Scenario: Get a user as an admin
-    Given a user with role "admin"
     When I request "GET" "/users/{user_1.id}"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
     And The "content-type" header response should be "application/ld+json; charset=utf-8"
+    Then the response status code should be 200
+
+  Scenario: Get a single user as seller
+    Given a user with role "Seller"
+    When I request "GET" "/users/{seller.id}"
+    And The "content-type" header response should be "application/ld+json; charset=utf-8"
+    Then the response status code should be 200
 
   Scenario: Get non existing user
     Given a user with role "Admin"
     When I request "GET" "/users/9999"
     Then the response status code should be 404
 
-#Test Patch /users
-  #something wrong with payload but what???
+  # Test Patch /users
   Scenario: Update existing user as admin
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Admin"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
           """
           {
-            "username": "test1",
-            "password": "test",
-            "email": "test1@gmail.com"
+            "username": "username1"
           }
           """
-    Then I request "PATCH" a single data from "userList"
+    When I request "PATCH" "/users/{user_1.id}"
     Then the response status code should be 200
+    Then the "username" property should equal "username1"
 
   Scenario: Update existing user using wrong payload
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
-    Given a user with role "Admin"
-    When I set payload
-          """
-          {
-            "username": "test1",
-            "password": "test",
-            "email": "test1@gmail.com"
-          }
-          """
-    Then I request "PATCH" a single data from "userList"
-    Then the response status code should be 415
-
-  Scenario: Update existing user using wrong data
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Admin"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
           """
-          {
-            "username": "test1",
-            "password": "test",
-            "email": "test1@gmail.com"
-          }
+          dzadazdazdada
           """
-    Then I request "PATCH" a single data from "userList"
+    When I request "PATCH" "/users/{user_1.id}"
     Then the response status code should be 400
 
   Scenario: Update existing user as user
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "User"
-    When I request "PATCH" a single data from "userList"
+    Given I set the "Content-Type" header to "application/merge-patch+json"
+    When I set payload
+          """
+          {
+            "username": "username1"
+          }
+          """
+    When I request "PATCH" "/users/{user_1.id}"
     Then the response status code should be 403
 
   Scenario: Update existing user as seller
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Seller"
-    When I request "PATCH" a single data from "userList"
+    Given I set the "Content-Type" header to "application/merge-patch+json"
+    When I set payload
+          """
+          {
+            "username": "username1"
+          }
+          """
+    When I request "PATCH" "/users/{user_1.id}"
     Then the response status code should be 403
 
   Scenario: Update non existing user
+    Given a user with role "Admin"
+    Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
           """
           {
-            "username": "test1",
-            "password": "test",
-            "email": "test1@gmail.com"
+            "username": "username1"
           }
           """
-    Given a user with role "Admin"
     When I request "PATCH" "/users/99999"
     Then the response status code should be 404
 
-#Test PUT /users
+  # Test PUT /users
   Scenario: Replace existing user as admin
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Admin"
+    Given I set the "Accept" header to "application/ld+json"
     When I set payload
           """
           {
-            "username": "test1",
-            "password": "test",
-            "email": "test1@gmail.com"
+            "username": "username1",
+            "password": "password1",
+            "email": "username1@gmail.com"
           }
           """
-    Then I request "PUT" a single data from "userList"
+    When I request "PUT" "/users/{user_1.id}"
     Then the response status code should be 200
+    Then the "username" property should equal "username1"
+    Then the "password" property should equal "password1"
+    Then the "email" property should equal "username1@gmail.com"
 
   Scenario: Replace existing user using wrong data
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Admin"
+    Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
           """
           """
-    Then I request "PUT" a single data from "userList"
-    Then the response status code should be 400
+    When I request "PUT" "/users/{user_1.id}"
+    Then the response status code should be 415
 
   Scenario: Replace existing user as user
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "User"
-    When I request "PUT" a single data from "userList"
+    Given I set the "Content-Type" header to "application/merge-patch+json"
+    When I set payload
+          """
+          {
+            "username": "username1",
+            "password": "password1",
+            "email": "username1@gmail.com"
+          }
+          """
+    When I request "PUT" "/users/{user_1.id}"
     Then the response status code should be 403
 
   Scenario: Replace existing user as seller
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Seller"
-    When I request "PUT" a single data from "userList"
-    Then the response status code should be 403
-
-  Scenario: Replace non existing user
+    Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
           """
           {
-            "username": "test1",
-            "password": "test",
-            "email": "test1@gmail.com"
+            "username": "username1",
+            "password": "password1",
+            "email": "username1@gmail.com"
           }
           """
+    When I request "PUT" "/users/{user_1.id}"
+    Then the response status code should be 403
+
+  Scenario: Replace non existing user
     Given a user with role "Admin"
+    Given I set the "Content-Type" header to "application/merge-patch+json"
+    When I set payload
+          """
+          {
+            "username": "username1",
+            "password": "password1",
+            "email": "username1@gmail.com"
+          }
+          """
     When I request "PUT" "/users/99999"
     Then the response status code should be 404
 
-#Test DELETE /users
+  # Test DELETE /users
   Scenario: Delete existing user as admin
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Admin"
-    Then I request "DELETE" a single data from "userList"
+    When I request "DELETE" "/users/{user_1.id}"
     Then the response status code should be 204
 
   Scenario: Delete existing user as user
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "User"
-    Then I request "DELETE" a single data from "userList"
+    When I request "DELETE" "/users/{user_1.id}"
     Then the response status code should be 403
 
   Scenario: Delete existing user as seller
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Seller"
-    Then I request "DELETE" a single data from "userList"
+    When I request "DELETE" "/users/{user_1.id}"
     Then the response status code should be 403
 
   Scenario: Delete non existing user
@@ -317,35 +259,23 @@ Feature: User
     When I request "DELETE" "/users/99999"
     Then the response status code should be 404
 
-#Test GET /users/{id}/products
+  # Test GET /users/{id}/products
   Scenario: Get user products as admin
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Admin"
-    When I request "GET" "products" from a single data from "userList"
+    When I request "GET" "/users/{user_1.id}/products"
+    And The "content-type" header response should be "application/ld+json; charset=utf-8"
     Then the response status code should be 200
 
   Scenario: Get user products as user
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "User"
-    When I request "GET" "products" from a single data from "userList"
+    When I request "GET" "/users/{user_1.id}/products"
+    And The "content-type" header response should be "application/ld+json; charset=utf-8"
     Then the response status code should be 200
 
   Scenario: Get user products as seller
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Seller"
-    When I request "GET" "products" from a single data from "userList"
+    When I request "GET" "/users/{user_1.id}/products"
+    And The "content-type" header response should be "application/ld+json; charset=utf-8"
     Then the response status code should be 200
 
   Scenario: Get user products from non existing user
@@ -353,38 +283,27 @@ Feature: User
     When I request "DELETE" "/users/99999/products"
     Then the response status code should be 405
 
-#Test GET /users/{id}/orders
+ # Test GET /users/{id}/orders
   Scenario: Get user orders as admin
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Admin"
-    When I request "GET" "orders" from a single data from "userList"
+    When I request "GET" "/users/{user_1.id}/orders"
+    And The "content-type" header response should be "application/ld+json; charset=utf-8"
     Then the response status code should be 200
 
   Scenario: Get user orders as user
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "User"
-    When I request "GET" "orders" from a single data from "userList"
+    When I request "GET" "/users/{user_1.id}/orders"
+    And The "content-type" header response should be "application/ld+json; charset=utf-8"
     Then the response status code should be 200
 
   Scenario: Get user orders as seller
-    When I request "GET" "/users"
-    Then the response status code should be 200
-    And The "content-type" header response should exist
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then I store the result in "userList"
     Given a user with role "Seller"
-    When I request "GET" "orders" from a single data from "userList"
+    When I request "GET" "/users/{user_1.id}/orders"
+    And The "content-type" header response should be "application/ld+json; charset=utf-8"
     Then the response status code should be 200
 
   Scenario: Get user orders from non existing user
     Given a user with role "Admin"
-    When I request "DELETE" "/users/99999/orders"
-    Then the response status code should be 405
+    When I request "GET" "/users/{user_1.id}/orders"
+    And The "content-type" header response should be "application/ld+json; charset=utf-8"
+    Then the response status code should be 200

@@ -8,7 +8,6 @@ Feature: Product
       | order   |
       | user    |
 
-  @only
   Scenario: Insert new product while not authenticated
     When I set payload
             """
@@ -22,7 +21,6 @@ Feature: Product
     When I request "POST" "/products"
     Then the response status code should be 401
 
-  @only
   Scenario: Insert new product while authenticated
     Given a user with role "Seller"
     When I set payload
@@ -49,4 +47,3 @@ Feature: Product
     Then the response status code should be 200
     And The "content-type" header response should exist
     And The "content-type" header response should be "application/ld+json; charset=utf-8"
-# Then the "status" property should equal "VALIDATED"

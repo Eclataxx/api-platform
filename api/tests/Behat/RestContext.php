@@ -45,13 +45,16 @@ final class RestContext extends ApiTestCase implements Context
     public function getResourceURI(string $string): ?string
     {
         $matches = [];
-        preg_match('/\/(?<type>.*)\/{(?<name>.*)\.(?<field>.*)}/', $string, $matches);
+        preg_match('/\/(?<type>.*)\/{(?<name>.*)\.(?<field>.*)}(\/(?<end>.*))?/', $string, $matches);
         if (
             isset($matches['type']) &&
             isset($matches['name']) &&
             isset($matches['field'])
         ) {
             $userId = $this->dataList->data[$matches['name']][$matches['field']];
+            if (isset($matches['end'])) {
+                return "/{$matches['type']}/{$userId}/{$matches['end']}";
+            }
             return "/{$matches['type']}/{$userId}";
         }
         return "";
