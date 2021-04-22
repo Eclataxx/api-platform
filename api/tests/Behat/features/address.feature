@@ -1,4 +1,3 @@
-@only
 Feature: Address
   Background:
     Given The fixtures files

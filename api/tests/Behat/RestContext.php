@@ -20,8 +20,9 @@ final class RestContext extends ApiTestCase implements Context
     use HeaderContextTrait;
     use FixturesContextTrait;
     use AuthContextTrait;
-    use BaseDatabaseTrait;
-    use HookContextTrait;
+    // use RefreshDatabaseTrait;
+     use BaseDatabaseTrait;
+     use HookContextTrait;
 
     /** @var Response|null */
     private $lastResponse;
@@ -95,7 +96,14 @@ final class RestContext extends ApiTestCase implements Context
         if(isset($values["cart"])) {
             $values["cart"] = $this->getResourceURI($values["cart"]);
         }
+        if (isset($values["products"])) {
+            $values["products"][0] = $this->getResourceURI($values["products"][0]);
+        }
+        if (isset($values["associatedUser"])) {
+            $values["associatedUser"] = $this->getResourceURI($values["associatedUser"]);
+        }
         $this->lastPayload = json_encode($values);
+        var_dump($this->lastPayload);
     }
 
     /**
