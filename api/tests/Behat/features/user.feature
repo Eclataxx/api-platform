@@ -22,7 +22,6 @@ Feature: User
     When I request "POST" "/users"
     Then the response status code should be 500
 
-  @only
   Scenario: Insert empty user
     When I set payload
       """
@@ -307,3 +306,22 @@ Feature: User
     When I request "GET" "/users/{user_1.id}/orders"
     And The "content-type" header response should be "application/ld+json; charset=utf-8"
     Then the response status code should be 200
+
+  @only
+  Scenario: Create an order
+    Given a user with role "Admin"
+    When I set payload
+      """
+      {
+        "cart": "/carts/{cart_1.id}"
+      }
+      """
+    When I request "POST" "/users/{user_1.id}/order"
+    Then the response status code should be 201
+    Then the "status" property should equal "ORDERED"
+    When I request "POST" "/users/{user_1.id}/order"
+    Then the response status code should be 500
+    When I request "GET" "/carts/{cart_1.id}"
+    Then the response status code should be 200
+    Then the "price" property should equal "0"
+    Then the "products" property should be an empty array

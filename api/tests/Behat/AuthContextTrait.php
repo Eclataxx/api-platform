@@ -20,7 +20,7 @@ trait AuthContextTrait
             'headers' => ['Content-Type' => 'application/ld+json'],
             'json' => [
                 'email' => $this->getMockedUserEmail($role),
-                'password' => 'S3CR3T',
+                'password' => 'secret',
             ],
         ]);
 

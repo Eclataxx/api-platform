@@ -9,14 +9,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class UserOrderCart extends AbstractController
 {
-    public function __invoke(User $data): User
+    public function __invoke(User $data): Order
     {
         $entityManager = $this->getDoctrine()->getManager();
 
         $cart = $data->getCart();
         $products = $cart->getProducts()->toArray();
         if (count($products) > 0) {
-            $order = new Order(new \DateTime(), "ORDERED");
+            $order = new Order();
+            $order->setDate(new \DateTime());
+            $order->setStatus("ORDERED");
             $order->setAssociatedUser($data);
             $order->setPrice($order->calculatePrice());
 
@@ -28,8 +30,10 @@ class UserOrderCart extends AbstractController
             $entityManager->persist($order);
             $entityManager->persist($cart);
             $entityManager->flush();
-        }
 
-        return $data;
+            return $order;
+        }
+        
+        throw new \LogicException("Your cart is empty");
     }
 }

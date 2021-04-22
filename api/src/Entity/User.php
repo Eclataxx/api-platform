@@ -33,7 +33,7 @@ use App\Controller\UserOrderCart;
  *          "post_user_order"={
  *              "method"="POST",
  *              "path"="/users/{id}/order",
- *              "controller"=UserOrderCart::class
+ *              "controller"=UserOrderCart::class,
  *          }
  *     },
  * )

@@ -106,6 +106,9 @@ final class RestContext extends ApiTestCase implements Context
         if (isset($values["submittedBy"])) {
             $values["submittedBy"] = $this->getResourceURI($values["submittedBy"]);
         }
+        if(isset($values["cart"])) {
+            $values["cart"] = $this->getResourceURI($values["cart"]);
+        }
         $this->lastPayload = json_encode($values);
     }
 
@@ -153,7 +156,7 @@ final class RestContext extends ApiTestCase implements Context
     /**
      * @Then the :property property should exist
      */
-    public function thePropertyExists($property)
+    public function thePropertyExists(string $property)
     {
         $payload = json_decode($this->lastResponse->getContent(), true);
         assertTrue($this->arrayHas($payload, $property));
@@ -162,7 +165,7 @@ final class RestContext extends ApiTestCase implements Context
     /**
      * @Then the :property property should not exist
      */
-    public function thePropertyDoesNotExists($property)
+    public function thePropertyDoesNotExists(string $property)
     {
         $payload = json_decode($this->lastResponse->getContent(), true);
         assertFalse($this->arrayHas($payload, $property));
@@ -171,7 +174,7 @@ final class RestContext extends ApiTestCase implements Context
     /**
      * @Then all the :property properties should exist
      */
-    public function thePropertyInListExists($property)
+    public function thePropertyInListExists(string $property)
     {
         $payload = json_decode($this->lastResponse->getContent(), true);
         foreach ($payload["hydra:member"] as $value) {
@@ -181,7 +184,7 @@ final class RestContext extends ApiTestCase implements Context
     /**
      * @Then all the :property properties should not exist
      */
-    public function thePropertyInListDoesNotExists($property)
+    public function thePropertyInListDoesNotExists(string $property)
     {
         $payload = json_decode($this->lastResponse->getContent(), true);
         foreach ($payload["hydra:member"] as $value) {
@@ -192,6 +195,18 @@ final class RestContext extends ApiTestCase implements Context
     protected function arrayHas($array, $key)
     {
         return array_key_exists($key, $array);
+    }
+
+
+     /**
+     * @Then the :property property should be an empty array
+     */
+    public function thePropertyIsAnEmptyArray(string $property)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        assertTrue(
+            is_array($payload[$property]) and $payload[$property] === array()
+        );
     }
 
     /**
