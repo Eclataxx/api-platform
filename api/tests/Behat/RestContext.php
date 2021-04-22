@@ -9,7 +9,6 @@ use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Response;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Fidry\AliceDataFixtures\Loader\PersisterLoader;
-// use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 use Hautelook\AliceBundle\PhpUnit\BaseDatabaseTrait;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -18,9 +17,6 @@ final class RestContext extends ApiTestCase implements Context
     use HeaderContextTrait;
     use FixturesContextTrait;
     use AuthContextTrait;
-    // use RefreshDatabaseTrait;
-    // use BaseDatabaseTrait;
-    // use HookContextTrait;
 
     /** @var Response|null */
     private $lastResponse;
@@ -31,12 +27,16 @@ final class RestContext extends ApiTestCase implements Context
     /** @var PersisterLoader */
     private $fixturesLoader;
 
+    /** @var DataList|null */
+    private $dataList;
+
     public function __construct(KernelInterface $kernel)
     {
         parent::__construct();
         $this->fixturesLoader = $kernel->getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
+        $this->dataList = DataList::getInstance();
     }
-    
+
     /**
      * @When I request :method :path
      */
@@ -51,8 +51,27 @@ final class RestContext extends ApiTestCase implements Context
         if ($this->lastPayload) {
             $options['body'] = $this->lastPayload->getRaw();
         }
-    
+
         $this->lastResponse = $this->createClient()->request($method, $path, $options);
+    }
+
+    /**
+     * @When I request :method a single data from :list
+     */
+    public function iRequestSingleDataFromList(string $method, string $list): void
+    {
+        $options = ['headers' => $this->headers];
+
+        if ($this->token) {
+            $options['headers']['Authorization'] = $this->token;
+        }
+
+        if ($this->lastPayload) {
+            $options['body'] = $this->lastPayload->getRaw();
+        }
+
+        $data = $this->dataList->getData($list);
+        $this->lastResponse = $this->createClient()->request($method, $data[0]["@id"], $options);
     }
 
     /**
@@ -95,14 +114,20 @@ final class RestContext extends ApiTestCase implements Context
     public function thePropertyEquals($property, $expectedValue)
     {
         $payload = json_decode($this->lastResponse->getContent());
-        // var_dump($payload);
         $actualValue = $payload->description;
-        var_dump($actualValue);
 
         assertEquals(
             $expectedValue,
             $actualValue,
             "Asserting the [$property] property in current scope equals [$expectedValue]: ".json_encode($payload)
         );
+    }
+
+    /**
+     * @Then I store the result in :listName
+     */
+    public function iStoreTheResultIn($listName)
+    {
+        $this->dataList->data[$listName] = $this->lastResponse->getContent();
     }
 }

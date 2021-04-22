@@ -1,15 +1,14 @@
 Feature: User
+    Background:
+        Given The fixtures files
+            | address |
+            | cart    |
+            | product |
+            | order   |
+            | user    |
 
-  Background:
-    Given The fixtures files
-      | user    |
-      | cart    |
-      | product |
-      | address |
-      | order   |
-#Test Post /users
-  Scenario: Insert new user
-    When I set payload
+    Scenario: Insert new user
+        When I set payload
             """
             {
                 "username": "test1",
@@ -19,6 +18,16 @@ Feature: User
             """
     When I request "POST" "/users"
     Then the response status code should be 201
+
+    Scenario: Get list of users then get a single user
+        When I request "GET" "/users"
+        Then the response status code should be 200
+        And The "content-type" header response should exist
+        And The "content-type" header response should be "application/ld+json; charset=utf-8"
+        Then I store the result in "userList"
+        Given a user with role "User"
+        When I request "GET" a single data from "userList"
+        Then the response status code should be 200
 
   Scenario: Insert empty user
     When I set payload
