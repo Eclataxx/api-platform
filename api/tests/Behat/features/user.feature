@@ -32,8 +32,8 @@ Feature: User
     When I set payload
           """
           {
-            "username": "exist"
-            "email": "iexist@myges.fr"
+            "username": "test1",
+            "password": "test",
             "email": "test1@gmail.com"
           }
           """
@@ -81,17 +81,11 @@ Feature: User
     And The "content-type" header response should be "application/ld+json; charset=utf-8"
     #Then I add to reference whith "usersList"
 
-  Scenario: Get restricted data without JWT
-    When I request "GET" "/users/9999"
-    Then the response status code should be 401
+  Scenario: Get restricted data
+      When I request "GET" "/users/9999"
+      Then the response status code should be 401
 
-  Scenario: Get restricted data without JWT
-    When I set payload
-          """
-          {
-            "password": "test2",
-            "email": "test1@gmail.com"
-          }
-          """
-    When I request "PATCH" "/users/9999"
-    Then the response status code should be 401
+  Scenario: Get a user
+      Given a user with role "User"
+      When I request "GET" "/users/1"
+      Then the response status code should be 200

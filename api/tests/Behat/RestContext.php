@@ -9,14 +9,18 @@ use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Response;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Fidry\AliceDataFixtures\Loader\PersisterLoader;
-use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
+// use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
+use Hautelook\AliceBundle\PhpUnit\BaseDatabaseTrait;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 final class RestContext extends ApiTestCase implements Context
 {
-    use RefreshDatabaseTrait;
     use HeaderContextTrait;
     use FixturesContextTrait;
+    use AuthContextTrait;
+    // use RefreshDatabaseTrait;
+    // use BaseDatabaseTrait;
+    // use HookContextTrait;
 
     /** @var Response|null */
     private $lastResponse;
@@ -32,17 +36,22 @@ final class RestContext extends ApiTestCase implements Context
         parent::__construct();
         $this->fixturesLoader = $kernel->getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
     }
-
+    
     /**
      * @When I request :method :path
      */
-    public function iSendARequestTo(string $method, string $path): void
+    public function iSendRequestTo(string $method, string $path): void
     {
         $options = ['headers' => $this->headers];
+
+        if ($this->token) {
+            $options['headers']['Authorization'] = $this->token;
+        }
+
         if ($this->lastPayload) {
             $options['body'] = $this->lastPayload->getRaw();
         }
-
+    
         $this->lastResponse = $this->createClient()->request($method, $path, $options);
     }
 
@@ -76,7 +85,24 @@ final class RestContext extends ApiTestCase implements Context
     {
         $statusCodeInResponse = $this->lastResponse->getStatusCode();
         if ($statusCodeInResponse != $statusCode) {
-            throw new \RuntimeException("Status code error, status received was {$statusCodeInResponse}");
+            throw new \RuntimeException("Status code error, status code received is {$statusCodeInResponse}");
         }
+    }
+
+    /**
+     * @Then the :property property should equal :expectedValue
+     */
+    public function thePropertyEquals($property, $expectedValue)
+    {
+        $payload = json_decode($this->lastResponse->getContent());
+        // var_dump($payload);
+        $actualValue = $payload->description;
+        var_dump($actualValue);
+
+        assertEquals(
+            $expectedValue,
+            $actualValue,
+            "Asserting the [$property] property in current scope equals [$expectedValue]: ".json_encode($payload)
+        );
     }
 }
