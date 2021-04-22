@@ -4,6 +4,7 @@ namespace App\Tests\Behat;
 
 use App\Entity\User;
 use Behat\Gherkin\Node\PyStringNode;
+use Doctrine\ORM\EntityManagerInterface;
 
 trait AuthContextTrait
 {
@@ -19,11 +20,11 @@ trait AuthContextTrait
         $user->setEmail('test@example.com');
         $user->setUsername('user');
         $user->setPassword(
-            static::$container->get('security.password_encoder')->encodePassword($user, '$3CR3T')
+            self::$container->get('security.password_encoder')->encodePassword($user, '$3CR3T')
         );
         $user->setRoles([$this->getRole($role)]);
 
-        $manager = static::$container->get('doctrine')->getManager();
+        $manager = self::$container->get('doctrine')->getManager();
         $manager->persist($user);
         $manager->flush();
 
@@ -43,7 +44,7 @@ trait AuthContextTrait
         $this->token = "Bearer {$json['token']}";
     }
 
-    private function getRole(string $role): string
+    protected function getRole(string $role): string
     {
         return strtoupper("role_{$role}");
     }

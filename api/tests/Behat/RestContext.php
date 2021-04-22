@@ -9,15 +9,20 @@ use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Response;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Fidry\AliceDataFixtures\Loader\PersisterLoader;
+use App\Entity\User;
 use Hautelook\AliceBundle\PhpUnit\BaseDatabaseTrait;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Serializer\Encoder\JsonEncode;
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertTrue;
+use function PHPUnit\Framework\assertFalse;
 
 final class RestContext extends ApiTestCase implements Context
 {
     use HeaderContextTrait;
     use FixturesContextTrait;
     use AuthContextTrait;
+    use BaseDatabaseTrait;
+    use HookContextTrait;
 
     /** @var Response|null */
     private $lastResponse;
@@ -70,7 +75,6 @@ final class RestContext extends ApiTestCase implements Context
         if ($this->lastPayload && $method != "PATCH") {
             $options['body'] = $this->lastPayload->getRaw();
         }
-
 
         $data = $this->dataList->getData($list);
         $this->lastResponse = $this->createClient()->request($method, $data[0]["@id"], $options);
@@ -131,18 +135,76 @@ final class RestContext extends ApiTestCase implements Context
     }
 
     /**
+     * @Then all the :property properties should equal :expectedValue
+     */
+    public function thePropertyInListEquals($property, $expectedValue)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+
+        foreach ($payload["hydra:member"] as $value) {
+            $actualValue = $value[$property];
+            assertEquals(
+                $expectedValue,
+                $actualValue,
+            );
+        }
+    }
+
+    /**
      * @Then the :property property should equal :expectedValue
      */
     public function thePropertyEquals($property, $expectedValue)
     {
-        $payload = json_decode($this->lastResponse->getContent());
-        $actualValue = $payload->description;
-
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        $actualValue = $payload[$property];
         assertEquals(
             $expectedValue,
             $actualValue,
-            "Asserting the [$property] property in current scope equals [$expectedValue]: " . json_encode($payload)
         );
+    }
+
+    /**
+     * @Then the :property property should exist
+     */
+    public function thePropertyExists($property)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        assertTrue($this->arrayHas($payload, $property));
+    }
+
+    /**
+     * @Then the :property property should not exist
+     */
+    public function thePropertyDoesNotExists($property)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        assertFalse($this->arrayHas($payload, $property));
+    }
+
+    /**
+     * @Then all the :property properties should exist
+     */
+    public function thePropertyInListExists($property)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        foreach ($payload["hydra:member"] as $value) {
+            assertTrue($this->arrayHas($value, $property));
+        }
+    }
+    /**
+     * @Then all the :property properties should not exist
+     */
+    public function thePropertyInListDoesNotExists($property)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        foreach ($payload["hydra:member"] as $value) {
+            assertFalse($this->arrayHas($value, $property));
+        }
+    }
+
+    protected function arrayHas($array, $key)
+    {
+        return array_key_exists($key, $array);
     }
 
     /**
