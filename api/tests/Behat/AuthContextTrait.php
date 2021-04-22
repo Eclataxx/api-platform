@@ -44,7 +44,7 @@ trait AuthContextTrait
         $this->token = "Bearer {$json['token']}";
     }
 
-    private function getRole(string $role): string
+    protected function getRole(string $role): string
     {
         return strtoupper("role_{$role}");
     }

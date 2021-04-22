@@ -19,16 +19,6 @@ Feature: User
         When I request "POST" "/users"
         Then the response status code should be 201
 
-    Scenario: Get list of users then get a single user
-        When I request "GET" "/users"
-        Then the response status code should be 200
-        And The "content-type" header response should exist
-        And The "content-type" header response should be "application/ld+json; charset=utf-8"
-        Then I store the result in "userList"
-        Given a user with role "User"
-        When I request "GET" a single data from "userList"
-        Then the response status code should be 200
-
     Scenario: Insert empty user
         When I set payload
             """
@@ -87,6 +77,7 @@ Feature: User
         Then the response status code should be 200
         And The "content-type" header response should exist
         And The "content-type" header response should be "application/ld+json; charset=utf-8"
+        Then all the "password" properties should not exist
         Given a user with role "User"
         Then I store the result in "userList"
         When I request "GET" a single data from "userList"

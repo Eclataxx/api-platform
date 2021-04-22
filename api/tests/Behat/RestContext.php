@@ -13,6 +13,8 @@ use App\Entity\User;
 use Hautelook\AliceBundle\PhpUnit\BaseDatabaseTrait;
 use Symfony\Component\HttpKernel\KernelInterface;
 use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertTrue;
+use function PHPUnit\Framework\assertFalse;
 
 final class RestContext extends ApiTestCase implements Context
 {
@@ -113,23 +115,76 @@ final class RestContext extends ApiTestCase implements Context
     }
 
     /**
-     * @Then the :property properties should equal :expectedValue
+     * @Then all the :property properties should equal :expectedValue
+     */
+    public function thePropertyInListEquals($property, $expectedValue)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+
+        foreach ($payload["hydra:member"] as $value) {
+            $actualValue = $value[$property];
+            assertEquals(
+                $expectedValue,
+                $actualValue,
+            );
+        }
+    }
+
+    /**
+     * @Then the :property property should equal :expectedValue
      */
     public function thePropertyEquals($property, $expectedValue)
     {
         $payload = json_decode($this->lastResponse->getContent(), true);
+        $actualValue = $payload[$property];
+        assertEquals(
+            $expectedValue,
+            $actualValue,
+        );
+    }
 
-        if(isset($payload["hydra:member"]) && is_array($payload["hydra:member"])) {
-            foreach ($payload["hydra:member"] as $value) {
-                $actualValue = $value[$property];
-                assertEquals(
-                    $expectedValue,
-                    $actualValue,
-                    "Asserting the [$property] property in current scope equals [$expectedValue]: ".json_encode($payload)
-                );
-            }
+    /**
+     * @Then the :property property should exist
+     */
+    public function thePropertyExists($property)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        assertTrue($this->arrayHas($payload, $property));
+    }
+
+    /**
+     * @Then the :property property should not exist
+     */
+    public function thePropertyDoesNotExists($property)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        assertFalse($this->arrayHas($payload, $property));
+    }
+
+    /**
+     * @Then all the :property properties should exist
+     */
+    public function thePropertyInListExists($property)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        foreach ($payload["hydra:member"] as $value) {
+            assertTrue($this->arrayHas($value, $property));
         }
-        
+    }
+    /**
+     * @Then all the :property properties should not exist
+     */
+    public function thePropertyInListDoesNotExists($property)
+    {
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        foreach ($payload["hydra:member"] as $value) {
+            assertFalse($this->arrayHas($value, $property));
+        }
+    }
+
+    protected function arrayHas($array, $key)
+    {
+        return array_key_exists($key, $array);
     }
 
     /**
