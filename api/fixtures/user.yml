@@ -7,7 +7,7 @@ App\Entity\User:
         cart: "@cart_<current()>"
 
     custom:
-        username: "custom user"
+        username: "custom user" 
         email: "user@gmail.com"
         plainPassword: "S3CR3T"
         roles: ["ROLE_USER"]

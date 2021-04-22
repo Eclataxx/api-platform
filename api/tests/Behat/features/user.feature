@@ -22,7 +22,6 @@ Feature: User
     When I request "POST" "/users"
     Then the response status code should be 500
 
-  @only
   Scenario: Insert empty user
     When I set payload
       """
@@ -269,14 +268,12 @@ Feature: User
   Scenario: Get user products as user
     Given a user with role "User"
     When I request "GET" "/users/{user_1.id}/products"
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then the response status code should be 200
+    Then the response status code should be 403
 
   Scenario: Get user products as seller
     Given a user with role "Seller"
     When I request "GET" "/users/{user_1.id}/products"
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then the response status code should be 200
+    Then the response status code should be 403
 
   Scenario: Get user products from non existing user
     Given a user with role "Admin"
@@ -293,17 +290,36 @@ Feature: User
   Scenario: Get user orders as user
     Given a user with role "User"
     When I request "GET" "/users/{user_1.id}/orders"
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then the response status code should be 200
+    Then the response status code should be 403
 
   Scenario: Get user orders as seller
     Given a user with role "Seller"
     When I request "GET" "/users/{user_1.id}/orders"
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then the response status code should be 200
+    Then the response status code should be 403
 
   Scenario: Get user orders from non existing user
     Given a user with role "Admin"
     When I request "GET" "/users/{user_1.id}/orders"
+    Then the response status code should be 200
+
+  # Test GET /users/{id}/cart
+  Scenario: Get user carts as admin
+    Given a user with role "Admin"
+    When I request "GET" "/users/{user_1.id}/cart"
     And The "content-type" header response should be "application/ld+json; charset=utf-8"
     Then the response status code should be 200
+
+  Scenario: Get user carts as user
+    Given a user with role "User"
+    When I request "GET" "/users/{user_1.id}/cart"
+    Then the response status code should be 403
+
+  Scenario: Get user carts as seller
+    Given a user with role "Seller"
+    When I request "GET" "/users/{user_1.id}/cart"
+    Then the response status code should be 403
+
+  Scenario: Get user carts from non existing user
+    Given a user with role "Admin"
+    When I request "DELETE" "/users/99999/cart"
+    Then the response status code should be 405

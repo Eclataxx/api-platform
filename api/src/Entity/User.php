@@ -33,7 +33,8 @@ use App\Controller\UserOrderCart;
  *          "post_user_order"={
  *              "method"="POST",
  *              "path"="/users/{id}/order",
- *              "controller"=UserOrderCart::class
+ *              "controller"=UserOrderCart::class,
+ *              "security"="is_granted('ROLE_ADMIN')",
  *          }
  *     },
  * )
@@ -121,6 +122,8 @@ class User implements UserInterface
     /**
      * @ORM\OneToOne(targetEntity=Cart::class, inversedBy="relatedUser", cascade={"persist", "remove"})
      * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ApiSubresource()
+     * @MaxDepth(1)
      */
     private $cart;
 

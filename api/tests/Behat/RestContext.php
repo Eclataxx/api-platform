@@ -106,6 +106,7 @@ final class RestContext extends ApiTestCase implements Context
         if (isset($values["submittedBy"])) {
             $values["submittedBy"] = $this->getResourceURI($values["submittedBy"]);
         }
+
         $this->lastPayload = json_encode($values);
     }
 

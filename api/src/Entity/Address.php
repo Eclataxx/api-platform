@@ -9,7 +9,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"cart_get"}},
+ *              "security"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "post"={
+ *              "security"="is_granted('ROLE_ADMIN')"
+ *          }
+ *     },
+ *     itemOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"cart_get"}},
+ *              "security"="is_granted('ROLE_ADMIN') or object.associatedUser == user"
+ *          },
+ *          "delete"={"security"="is_granted('ROLE_ADMIN') or object.associatedUser == user"},
+ *          "put"={"security"="is_granted('ROLE_ADMIN') or object.associatedUser == user"},
+ *          "patch"={"security"="is_granted('ROLE_ADMIN') or object.associatedUser == user"}
+ *     },
+ * )
  * @ORM\Entity(repositoryClass=AddressRepository::class)
  */
 class Address
@@ -61,7 +80,7 @@ class Address
     /**
      * @ORM\OneToOne(targetEntity=User::class, mappedBy="address", cascade={"remove"})
      */
-    private $associatedUser;
+    public $associatedUser;
 
     public function getId(): ?int
     {

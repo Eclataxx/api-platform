@@ -14,12 +14,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     subresourceOperations={
  *      "api_users_cart_get_subresource"={
  *          "method"="GET",
- *          "normalization_context"={"groups"={"user_get_cart"}}
+ *          "normalization_context"={"groups"={"user_get_cart"}},
+ *          "security"="is_granted('ROLE_ADMIN')"
  *      }
  *     },
  *     collectionOperations={
  *          "get"={
- *              "normalization_context"={"groups"={"cart_get"}}
+ *              "normalization_context"={"groups"={"cart_get"}},
+ *              "security"={"security"={"is_granted('ROLE_ADMIN')"}}
  *          },
  *          "post",
  *     },
@@ -27,9 +29,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "get"={
  *              "normalization_context"={"groups"={"cart_get"}}
  *          },
- *          "delete",
- *          "put",
- *          "patch"
+ *          "delete"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.associatedUser == user"},
+ *          "put"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.associatedUser == user"},
+ *          "patch"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.associatedUser == user"}
  *     },
  * )
  * @ORM\Entity(repositoryClass=CartRepository::class)
