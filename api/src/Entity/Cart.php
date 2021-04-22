@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     collectionOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"cart_get"}},
- *              "security"={"security"={"is_granted('ROLE_ADMIN')"}}
+ *              "security"="is_granted('ROLE_ADMIN')"
  *          },
  *          "post",
  *     },
