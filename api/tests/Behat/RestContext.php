@@ -9,7 +9,6 @@ use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Response;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Fidry\AliceDataFixtures\Loader\PersisterLoader;
-use App\Entity\User;
 use Hautelook\AliceBundle\PhpUnit\BaseDatabaseTrait;
 use Symfony\Component\HttpKernel\KernelInterface;
 use function PHPUnit\Framework\assertEquals;
@@ -43,6 +42,24 @@ final class RestContext extends ApiTestCase implements Context
         $this->dataList = DataList::getInstance();
     }
 
+    public function getResourceURI(string $string): ?string
+    {
+        $matches = [];
+        preg_match('/\/(?<type>.*)\/{(?<name>.*)\.(?<field>.*)}(\/(?<end>.*))?/', $string, $matches);
+        if (
+            isset($matches['type']) &&
+            isset($matches['name']) &&
+            isset($matches['field'])
+        ) {
+            $userId = $this->dataList->data[$matches['name']][$matches['field']];
+            if (isset($matches['end'])) {
+                return "/{$matches['type']}/{$userId}/{$matches['end']}";
+            }
+            return "/{$matches['type']}/{$userId}";
+        }
+        return "";
+    }
+
     /**
      * @When I request :method :path
      */
@@ -55,49 +72,15 @@ final class RestContext extends ApiTestCase implements Context
         }
 
         if ($this->lastPayload) {
-            $options['body'] = $this->lastPayload->getRaw();
+            $options['body'] = $this->lastPayload;
         }
 
+        $resourceURI = $this->getResourceURI($path);
+        if ($resourceURI) {
+            $this->lastResponse = $this->createClient()->request($method, $resourceURI, $options);
+            return;
+        }
         $this->lastResponse = $this->createClient()->request($method, $path, $options);
-    }
-
-    /**
-     * @When I request :method a single data from :list
-     */
-    public function iRequestSingleDataFromList(string $method, string $list): void
-    {
-        $options = ['headers' => $this->headers];
-
-        if ($this->token) {
-            $options['headers']['Authorization'] = $this->token;
-        }
-
-        if ($this->lastPayload && $method != "PATCH") {
-            $options['body'] = $this->lastPayload->getRaw();
-        }
-
-        $data = $this->dataList->getData($list);
-        $this->lastResponse = $this->createClient()->request($method, $data[0]["@id"], $options);
-    }
-
-    /**
-     * @When I request :method :param from a single data from :list
-     */
-    public function iRequestProductsSingleDataFromList(string $method,string $param, string $list): void
-    {
-        $options = ['headers' => $this->headers];
-
-        if ($this->token) {
-            $options['headers']['Authorization'] = $this->token;
-        }
-
-        if ($this->lastPayload && $method != "PATCH") {
-            $options['body'] = $this->lastPayload->getRaw();
-        }
-
-
-        $data = $this->dataList->getData($list);
-        $this->lastResponse = $this->createClient()->request($method, $data[0]["@id"]."/".$param, $options);
     }
 
     /**
@@ -119,7 +102,11 @@ final class RestContext extends ApiTestCase implements Context
      */
     public function iSetPayload(PyStringNode $payload): void
     {
-        $this->lastPayload = $payload;
+        $values = json_decode($payload->getRaw(), true);
+        if (isset($values["submittedBy"])) {
+            $values["submittedBy"] = $this->getResourceURI($values["submittedBy"]);
+        }
+        $this->lastPayload = json_encode($values);
     }
 
     /**
