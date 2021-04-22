@@ -29,9 +29,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "get"={
  *              "normalization_context"={"groups"={"cart_get"}}
  *          },
- *          "delete"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.associatedUser == user"},
- *          "put"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.associatedUser == user"},
- *          "patch"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.associatedUser == user"}
+ *          "delete"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.relatedUser == user"},
+ *          "put"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.relatedUser == user"},
+ *          "patch"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.relatedUser == user"}
  *     },
  * )
  * @ORM\Entity(repositoryClass=CartRepository::class)
@@ -63,7 +63,7 @@ class Cart
     /**
      * @ORM\OneToOne(targetEntity=User::class, mappedBy="cart", cascade={"persist", "remove"})
      */
-    private $relatedUser;
+    public $relatedUser;
 
     public function __construct()
     {
