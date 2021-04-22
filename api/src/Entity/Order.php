@@ -64,14 +64,15 @@ class Order
     private $status;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orders")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orders", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false, referencedColumnName="id", onDelete="cascade")
      * @Groups({"order_get", "user_get_orders"})
      */
     private $associatedUser;
 
     /**
      * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="orders")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="cascade")
      * @Groups({"order_get", "user_get_item", "user_get_orders"})
      */
     private $products;

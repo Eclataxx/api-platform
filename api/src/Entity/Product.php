@@ -68,13 +68,15 @@ class Product
     private $orders;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="products")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="products", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(referencedColumnName="id", onDelete="cascade")
      * @Groups({"product_get", "order_get", "user_get_item", "user_get_orders", "user_get_cart"})
      */
     private $submittedBy;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="validatedProducts")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="validatedProducts", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(referencedColumnName="id", onDelete="cascade")
      * @Groups({"product_get"})
      */
     private $validatedBy;
@@ -86,7 +88,8 @@ class Product
     private $description;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Cart::class, mappedBy="products")
+     * @ORM\ManyToMany(targetEntity=Cart::class, mappedBy="products", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="cart_id", referencedColumnName="id", onDelete="cascade")
      * @Groups({"product_get"})
      */
     private $carts;

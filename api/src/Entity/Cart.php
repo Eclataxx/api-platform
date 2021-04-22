@@ -52,14 +52,14 @@ class Cart
     private $price;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="carts")
+     * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="carts", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="cascade")
      * @Groups({"cart_get", "user_get_item", "user_get_cart"})
      */
     private $products;
 
     /**
      * @ORM\OneToOne(targetEntity=User::class, mappedBy="cart", cascade={"persist", "remove"})
-     * @Groups({"cart_get", "user_get_cart"})
      */
     private $relatedUser;
 
@@ -129,12 +129,12 @@ class Cart
 
     public function setRelatedUser(User $relatedUser): self
     {
-        $this->relatedUser = $relatedUser;
-
         // set the owning side of the relation if necessary
         if ($relatedUser->getCart() !== $this) {
             $relatedUser->setCart($this);
         }
+
+        $this->relatedUser = $relatedUser;
 
         return $this;
     }

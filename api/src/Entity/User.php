@@ -93,39 +93,38 @@ class User implements UserInterface
     private $address;
 
     /**
-     * @ORM\OneToMany(targetEntity=Order::class, mappedBy="associatedUser", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Order::class, mappedBy="associatedUser", cascade={"persist", "remove"})
      * @Groups({"user_get_item"})
+     * @ORM\JoinColumn(name="associatedUser", referencedColumnName="id", onDelete="cascade")
      * @ApiSubresource()
      * @MaxDepth(1)
      */
     private $orders;
 
     /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="submittedBy")
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="submittedBy", cascade={"persist", "remove"})
      * @Groups({"user_get_item", "user_get_collection"})
+     * @ORM\JoinColumn(name="submittedBy", referencedColumnName="id", onDelete="cascade")
      * @ApiSubresource()
      * @MaxDepth(1)
      */
     private $products;
 
     /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="validatedBy")
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="validatedBy", cascade={"persist", "remove"})
      * @Groups({"user_get_item"})
      * @ApiSubresource()
      * @MaxDepth(1)
      */
     private $validatedProducts;
 
-
     /**
      * @ORM\OneToOne(targetEntity=Cart::class, inversedBy="relatedUser", cascade={"persist", "remove"})
-     * @Groups({"user_get_item"})
-     * @ApiSubresource()
-     * @MaxDepth(1)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $cart;
 
-    public function __construct($username = NULL, $email = NULL, $plainPassword = NULL)
+    public function __construct()
     {
         $this->address = new ArrayCollection();
         $this->orders = new ArrayCollection();
@@ -134,10 +133,6 @@ class User implements UserInterface
         $this->roles = [self::ROLE_USER];
         $this->setCart(new Cart());
         $this->setAddress(new Address());
-
-        $this->username = $username;
-        $this->email = $email;
-        $this->plainPassword = $plainPassword;
     }
 
     public function getId(): ?int
