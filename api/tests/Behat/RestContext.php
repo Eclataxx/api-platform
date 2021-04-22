@@ -103,7 +103,6 @@ final class RestContext extends ApiTestCase implements Context
             $values["associatedUser"] = $this->getResourceURI($values["associatedUser"]);
         }
         $this->lastPayload = json_encode($values);
-        var_dump($this->lastPayload);
     }
 
     /**

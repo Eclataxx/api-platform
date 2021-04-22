@@ -30,7 +30,5 @@ class FixturesProcessor implements ProcessorInterface
     public function postProcess(string $id, $object): void
     {
         $this->dataList->data[$id] = ["id" => $object->getId()];
-        // var_dump((method_exists($object, 'getId')) ?$object->getId() : null);
-        // var_dump((method_exists($object, 'getEmail')) ?$object->getEmail() : null);
     }
 }
