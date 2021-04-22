@@ -59,7 +59,7 @@ class Address
     private $additionalStreetAddress;
 
     /**
-     * @ORM\OneToOne(targetEntity=User::class, mappedBy="address")
+     * @ORM\OneToOne(targetEntity=User::class, mappedBy="address", cascade={"remove"})
      */
     private $associatedUser;
 
