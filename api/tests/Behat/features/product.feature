@@ -39,13 +39,11 @@ Feature: Product
   Scenario: Get list of products
     When I request "GET" "/products"
     Then the response status code should be 200
-    And The "content-type" header response should exist
     And The "content-type" header response should be "application/ld+json; charset=utf-8"
 
   Scenario: Get list of validated products
     When I request "GET" "/products?status=VALIDATED"
     Then the response status code should be 200
-    And The "content-type" header response should exist
     And The "content-type" header response should be "application/ld+json; charset=utf-8"
 
   Scenario: Update existing product as admin
