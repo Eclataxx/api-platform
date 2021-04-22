@@ -84,20 +84,6 @@ final class RestContext extends ApiTestCase implements Context
     }
 
     /**
-     * PAS UTILE SI PAYLOAD
-     * @When I request :method :path with data
-     */
-    public function iSendARequestWithData(string $method, string $path, PyStringNode $parameters): void
-    {
-        $this->lastResponse = $this->createClient()->request($method, $path, [
-            'headers' => [
-                'content-type' => 'application/ld+json'
-            ],
-            'body' => $parameters->getRaw()
-        ]);
-    }
-
-    /**
      * @When I set payload
      */
     public function iSetPayload(PyStringNode $payload): void

@@ -13,19 +13,25 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ApiResource(
+ *     subresourceOperations={
+ *      "api_users_products_get_subresource"={
+ *          "method"="GET",
+ *          "security"="is_granted('ROLE_ADMIN')"
+ *      }
+ *     },
  *     collectionOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"product_get"}}
  *          },
- *          "post"={"security"="is_granted('ROLE_SELLER')"}
+ *          "post"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN')"}
  *     },
  *     itemOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"product_get"}}
  *          },
- *          "delete",
- *          "put",
- *          "patch",
+ *          "delete"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.submittedBy == user"},
+ *          "put"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.submittedBy == user"},
+ *          "patch"={"security"="is_granted('ROLE_SELLER') or is_granted('ROLE_ADMIN') or object.submittedBy == user"},
  *     },
  *
  * )
@@ -72,7 +78,7 @@ class Product
      * @ORM\JoinColumn(referencedColumnName="id", onDelete="cascade")
      * @Groups({"product_get", "order_get", "user_get_item", "user_get_orders", "user_get_cart"})
      */
-    private $submittedBy;
+    public $submittedBy;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="validatedProducts", cascade={"persist", "remove"})

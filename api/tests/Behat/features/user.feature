@@ -268,14 +268,12 @@ Feature: User
   Scenario: Get user products as user
     Given a user with role "User"
     When I request "GET" "/users/{user_1.id}/products"
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then the response status code should be 200
+    Then the response status code should be 403
 
   Scenario: Get user products as seller
     Given a user with role "Seller"
     When I request "GET" "/users/{user_1.id}/products"
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then the response status code should be 200
+    Then the response status code should be 403
 
   Scenario: Get user products from non existing user
     Given a user with role "Admin"
@@ -292,18 +290,22 @@ Feature: User
   Scenario: Get user orders as user
     Given a user with role "User"
     When I request "GET" "/users/{user_1.id}/orders"
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then the response status code should be 200
+    Then the response status code should be 403
 
   Scenario: Get user orders as seller
     Given a user with role "Seller"
     When I request "GET" "/users/{user_1.id}/orders"
-    And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    Then the response status code should be 200
+    Then the response status code should be 403
 
   Scenario: Get user orders from non existing user
     Given a user with role "Admin"
     When I request "GET" "/users/{user_1.id}/orders"
+    Then the response status code should be 200
+
+  # Test GET /users/{id}/cart
+  Scenario: Get user carts as admin
+    Given a user with role "Admin"
+    When I request "GET" "/users/{user_1.id}/cart"
     And The "content-type" header response should be "application/ld+json; charset=utf-8"
     Then the response status code should be 200
 
@@ -325,3 +327,18 @@ Feature: User
     Then the response status code should be 200
     Then the "price" property should equal "0"
     Then the "products" property should be an empty array
+
+  Scenario: Get user carts as user
+    Given a user with role "User"
+    When I request "GET" "/users/{user_1.id}/cart"
+    Then the response status code should be 403
+
+  Scenario: Get user carts as seller
+    Given a user with role "Seller"
+    When I request "GET" "/users/{user_1.id}/cart"
+    Then the response status code should be 403
+
+  Scenario: Get user carts from non existing user
+    Given a user with role "Admin"
+    When I request "DELETE" "/users/99999/cart"
+    Then the response status code should be 405
