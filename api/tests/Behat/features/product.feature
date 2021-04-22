@@ -43,4 +43,4 @@ Feature: Product
         Then the response status code should be 200
         And The "content-type" header response should exist
         And The "content-type" header response should be "application/ld+json; charset=utf-8"
-        Then the "status" properties should equal "VALIDATED"
+        Then the "status" property should equal "VALIDATED"

@@ -118,15 +118,18 @@ final class RestContext extends ApiTestCase implements Context
     public function thePropertyEquals($property, $expectedValue)
     {
         $payload = json_decode($this->lastResponse->getContent(), true);
-        
-        foreach ($payload["hydra:member"] as $value) {
-            $actualValue = $value[$property];
-            assertEquals(
-                $expectedValue,
-                $actualValue,
-                "Asserting the [$property] property in current scope equals [$expectedValue]: ".json_encode($payload)
-            );
+
+        if(isset($payload["hydra:member"]) && is_array($payload["hydra:member"])) {
+            foreach ($payload["hydra:member"] as $value) {
+                $actualValue = $value[$property];
+                assertEquals(
+                    $expectedValue,
+                    $actualValue,
+                    "Asserting the [$property] property in current scope equals [$expectedValue]: ".json_encode($payload)
+                );
+            }
         }
+        
     }
 
     /**

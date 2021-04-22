@@ -82,19 +82,16 @@ Feature: User
         When I request "POST" "/users"
         Then the response status code should be 400
 
-    #Test GET /users
-    Scenario: Get list of users
+    Scenario: Get list of users and get single user
         When I request "GET" "/users"
         Then the response status code should be 200
         And The "content-type" header response should exist
         And The "content-type" header response should be "application/ld+json; charset=utf-8"
-    #Then I add to reference whith "usersList"
+        Given a user with role "User"
+        Then I store the result in "userList"
+        When I request "GET" a single data from "userList"
+        Then the response status code should be 200
 
     Scenario: Get restricted data
         When I request "GET" "/users/9999"
         Then the response status code should be 401
-
-    Scenario: Get a user
-        Given a user with role "User"
-        When I request "GET" "/users/1"
-        Then the response status code should be 200
