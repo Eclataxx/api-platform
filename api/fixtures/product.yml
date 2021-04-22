@@ -6,3 +6,11 @@ App\Entity\Product:
         status: <status()>
         submittedBy: "@user_*"
         validatedBy: "@user_*"
+
+    product_custom:
+        name: <name()>
+        description: <sentence(10)>
+        price: <randomNumber(3)>
+        status: <status()>
+        submittedBy: "@custom"
+        validatedBy: "@admin"

@@ -5,8 +5,8 @@ App\Entity\Cart:
         relatedUser: "@user_<current()>"
 
     cart_custom:
-        price: 0
-        products: []
+        price: 10
+        products: ["@product_custom"]
         relatedUser: "@custom"
 
     cart_seller:

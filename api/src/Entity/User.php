@@ -35,6 +35,7 @@ use App\Controller\UserOrderCart;
  *              "path"="/users/{id}/order",
  *              "controller"=UserOrderCart::class,
  *              "security"="is_granted('ROLE_ADMIN')",
+ *              "normalization_context"={"groups"={"post_user_order"}}
  *          }
  *     },
  * )
@@ -46,6 +47,7 @@ class User implements UserInterface
     public const ROLE_ADMIN = 'ROLE_ADMIN';
     public const ROLE_SELLER = 'ROLE_SELLER';
     public const ROLE_USER = 'ROLE_USER';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
