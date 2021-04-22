@@ -1,4 +1,3 @@
-@only
 Feature: Cart
   Background:
     Given the fixtures files

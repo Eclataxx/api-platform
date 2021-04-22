@@ -35,7 +35,6 @@ use App\Controller\UserOrderCart;
  *              "path"="/users/{id}/order",
  *              "controller"=UserOrderCart::class,
  *              "security"="is_granted('ROLE_ADMIN')",
- *              "normalization_context"={"groups"={"post_user_order"}}
  *          }
  *     },
  * )
