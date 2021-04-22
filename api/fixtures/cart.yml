@@ -1,9 +1,14 @@
 App\Entity\Cart:
-    cart_{1..20}:
+    cart_{1..10}:
         price: 0
         products: ["@product_*", "@product_*", "@product_*"]
         relatedUser: "@user_<current()>"
-        
+
+    cart_custom:
+        price: 0
+        products: []
+        relatedUser: "@custom"
+
     cart_seller:
         price: 0
         products: []

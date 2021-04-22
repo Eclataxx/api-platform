@@ -10,13 +10,13 @@ Feature: User
 
   Scenario: Insert new user and duplicate
     When I set payload
-            """
-            {
-                "username": "test1",
-                "password": "test",
-                "email": "test1@gmail.com"
-            }
-            """
+      """
+      {
+        "username": "test1",
+        "password": "test",
+        "email": "test1@gmail.com"
+      }
+      """
     When I request "POST" "/users"
     Then the response status code should be 201
     When I request "POST" "/users"
@@ -25,54 +25,54 @@ Feature: User
   @only
   Scenario: Insert empty user
     When I set payload
-          """
-          {}
-          """
+      """
+      {}
+      """
     When I request "POST" "/users"
     Then the response status code should be 500
 
   Scenario: Insert existing user
     When I set payload
-            """
-            {
-                "username": "admin",
-                "password": "admin",
-                "email": "admin@gmail.com"
-            }
-            """
+      """
+      {
+        "username": "admin",
+        "password": "admin",
+        "email": "admin@gmail.com"
+      }
+      """
     When I request "POST" "/users"
     Then the response status code should be 500
 
   Scenario: Insert wrong user - password
     When I set payload
-            """
-            {
-                "username": "test1",
-                "email": "test1@gmail.com"
-            }
-            """
+      """
+      {
+        "username": "test1",
+        "email": "test1@gmail.com"
+      }
+      """
     When I request "POST" "/users"
     Then the response status code should be 500
 
   Scenario: Insert wrong user - username
     When I set payload
-            """
-            {
-                "password": "test",
-                "email": "test1@gmail.com"
-            }
-            """
+      """
+      {
+        "password": "test",
+        "email": "test1@gmail.com"
+      }
+      """
     When I request "POST" "/users"
     Then the response status code should be 500
 
   Scenario: Insert wrong user - email
     When I set payload
-            """
-            {
-            "username": "test1",
-            "password": "test",
-            }
-            """
+      """
+      {
+      "username": "test1",
+      "password": "test",
+      }
+      """
     When I request "POST" "/users"
     Then the response status code should be 400
 
@@ -114,11 +114,11 @@ Feature: User
     Given a user with role "Admin"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
-          """
-          {
-            "username": "username1"
-          }
-          """
+      """
+      {
+        "username": "username1"
+      }
+      """
     When I request "PATCH" "/users/{user_1.id}"
     Then the response status code should be 200
     Then the "username" property should equal "username1"
@@ -127,9 +127,9 @@ Feature: User
     Given a user with role "Admin"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
-          """
-          dzadazdazdada
-          """
+      """
+      dzadazdazdada
+      """
     When I request "PATCH" "/users/{user_1.id}"
     Then the response status code should be 400
 
@@ -137,11 +137,11 @@ Feature: User
     Given a user with role "User"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
-          """
-          {
-            "username": "username1"
-          }
-          """
+      """
+      {
+        "username": "username1"
+      }
+      """
     When I request "PATCH" "/users/{user_1.id}"
     Then the response status code should be 403
 
@@ -149,11 +149,11 @@ Feature: User
     Given a user with role "Seller"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
-          """
-          {
-            "username": "username1"
-          }
-          """
+      """
+      {
+        "username": "username1"
+      }
+      """
     When I request "PATCH" "/users/{user_1.id}"
     Then the response status code should be 403
 
@@ -161,11 +161,11 @@ Feature: User
     Given a user with role "Admin"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
-          """
-          {
-            "username": "username1"
-          }
-          """
+      """
+      {
+        "username": "username1"
+      }
+      """
     When I request "PATCH" "/users/99999"
     Then the response status code should be 404
 
@@ -174,13 +174,13 @@ Feature: User
     Given a user with role "Admin"
     Given I set the "Accept" header to "application/ld+json"
     When I set payload
-          """
-          {
-            "username": "username1",
-            "password": "password1",
-            "email": "username1@gmail.com"
-          }
-          """
+      """
+      {
+        "username": "username1",
+        "password": "password1",
+        "email": "username1@gmail.com"
+      }
+      """
     When I request "PUT" "/users/{user_1.id}"
     Then the response status code should be 200
     Then the "username" property should equal "username1"
@@ -191,8 +191,8 @@ Feature: User
     Given a user with role "Admin"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
-          """
-          """
+      """
+      """
     When I request "PUT" "/users/{user_1.id}"
     Then the response status code should be 415
 
@@ -200,13 +200,13 @@ Feature: User
     Given a user with role "User"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
-          """
-          {
-            "username": "username1",
-            "password": "password1",
-            "email": "username1@gmail.com"
-          }
-          """
+      """
+      {
+        "username": "username1",
+        "password": "password1",
+        "email": "username1@gmail.com"
+      }
+      """
     When I request "PUT" "/users/{user_1.id}"
     Then the response status code should be 403
 
@@ -214,13 +214,13 @@ Feature: User
     Given a user with role "Seller"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
-          """
-          {
-            "username": "username1",
-            "password": "password1",
-            "email": "username1@gmail.com"
-          }
-          """
+      """
+      {
+        "username": "username1",
+        "password": "password1",
+        "email": "username1@gmail.com"
+      }
+      """
     When I request "PUT" "/users/{user_1.id}"
     Then the response status code should be 403
 
@@ -228,13 +228,13 @@ Feature: User
     Given a user with role "Admin"
     Given I set the "Content-Type" header to "application/merge-patch+json"
     When I set payload
-          """
-          {
-            "username": "username1",
-            "password": "password1",
-            "email": "username1@gmail.com"
-          }
-          """
+      """
+      {
+        "username": "username1",
+        "password": "password1",
+        "email": "username1@gmail.com"
+      }
+      """
     When I request "PUT" "/users/99999"
     Then the response status code should be 404
 
@@ -283,7 +283,7 @@ Feature: User
     When I request "DELETE" "/users/99999/products"
     Then the response status code should be 405
 
- # Test GET /users/{id}/orders
+  # Test GET /users/{id}/orders
   Scenario: Get user orders as admin
     Given a user with role "Admin"
     When I request "GET" "/users/{user_1.id}/orders"

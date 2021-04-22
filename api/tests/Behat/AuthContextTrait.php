@@ -16,23 +16,11 @@ trait AuthContextTrait
      */
     public function IamAuthenticatedAs(string $role): void
     {
-        $user = new User();
-        $user->setEmail('test@example.com');
-        $user->setUsername('user');
-        $user->setPassword(
-            self::$container->get('security.password_encoder')->encodePassword($user, '$3CR3T')
-        );
-        $user->setRoles([$this->getRole($role)]);
-
-        $manager = self::$container->get('doctrine')->getManager();
-        $manager->persist($user);
-        $manager->flush();
-
-        $response = $this->createClient()->request('POST', '/authentication_token', [
+        $response = self::createClient()->request('POST', '/authentication_token', [
             'headers' => ['Content-Type' => 'application/ld+json'],
             'json' => [
-                'email' => 'test@example.com',
-                'password' => '$3CR3T',
+                'email' => $this->getMockedUserEmail($role),
+                'password' => 'S3CR3T',
             ],
         ]);
 
@@ -44,8 +32,8 @@ trait AuthContextTrait
         $this->token = "Bearer {$json['token']}";
     }
 
-    protected function getRole(string $role): string
+    protected function getMockedUserEmail(string $role): string
     {
-        return strtoupper("role_{$role}");
+        return strtolower($role).'@gmail.com';
     }
 }

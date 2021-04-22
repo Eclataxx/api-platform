@@ -1,15 +1,23 @@
-App\Entity\User:        
-    user_{1..20}:
+App\Entity\User:
+    user_{1..10}:
         username: <username()>
         email: <email()>
         password: <password()>
         address: "@address_<current()>"
         cart: "@cart_<current()>"
-        
+
+    custom:
+        username: "custom user"
+        email: "user@gmail.com"
+        plainPassword: "S3CR3T"
+        roles: ["ROLE_USER"]
+        address: "@address_custom"
+        cart: "@cart_custom"
+
     seller:
         username: "seller"
         email: "seller@gmail.com"
-        plainPassword: "seller"
+        plainPassword: "S3CR3T"
         roles: ["ROLE_SELLER"]
         address: "@address_seller"
         cart: "@cart_seller"
@@ -17,7 +25,7 @@ App\Entity\User:
     admin:
         username: "admin"
         email: "admin@gmail.com"
-        plainPassword: "admin"
+        plainPassword: "S3CR3T"
         roles: ["ROLE_ADMIN"]
         address: "@address_admin"
         cart: "@cart_admin"

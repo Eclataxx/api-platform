@@ -7,6 +7,14 @@ App\Entity\Address:
         street_address: <streetName()>
         additional_street_address: <streetName()>
 
+    address_custom:
+        city: <city()>
+        country: <country()>
+        postal_code: <postcode()>
+        state: <state()>
+        street_address: <streetName()>
+        additional_street_address: <streetName()>
+
     address_seller:
         city: <city()>
         country: <country()>
@@ -14,7 +22,7 @@ App\Entity\Address:
         state: <state()>
         street_address: <streetName()>
         additional_street_address: <streetName()>
-        
+
     address_admin:
         city: <city()>
         country: <country()>
