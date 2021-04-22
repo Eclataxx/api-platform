@@ -9,18 +9,18 @@ use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Response;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Fidry\AliceDataFixtures\Loader\PersisterLoader;
-// use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
+use App\Entity\User;
 use Hautelook\AliceBundle\PhpUnit\BaseDatabaseTrait;
 use Symfony\Component\HttpKernel\KernelInterface;
+use function PHPUnit\Framework\assertEquals;
 
 final class RestContext extends ApiTestCase implements Context
 {
     use HeaderContextTrait;
     use FixturesContextTrait;
     use AuthContextTrait;
-    // use RefreshDatabaseTrait;
-    // use BaseDatabaseTrait;
-    // use HookContextTrait;
+    use BaseDatabaseTrait;
+    use HookContextTrait;
 
     /** @var Response|null */
     private $lastResponse;
@@ -90,19 +90,19 @@ final class RestContext extends ApiTestCase implements Context
     }
 
     /**
-     * @Then the :property property should equal :expectedValue
+     * @Then the :property properties should equal :expectedValue
      */
     public function thePropertyEquals($property, $expectedValue)
     {
-        $payload = json_decode($this->lastResponse->getContent());
-        // var_dump($payload);
-        $actualValue = $payload->description;
-        var_dump($actualValue);
-
-        assertEquals(
-            $expectedValue,
-            $actualValue,
-            "Asserting the [$property] property in current scope equals [$expectedValue]: ".json_encode($payload)
-        );
+        $payload = json_decode($this->lastResponse->getContent(), true);
+        
+        foreach ($payload["hydra:member"] as $value) {
+            $actualValue = $value[$property];
+            assertEquals(
+                $expectedValue,
+                $actualValue,
+                "Asserting the [$property] property in current scope equals [$expectedValue]: ".json_encode($payload)
+            );
+        }
     }
 }
