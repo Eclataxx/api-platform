@@ -1,4 +1,4 @@
-App\Entity\User:
+App\Entity\User:        
     user_{1..20}:
         username: <username()>
         email: <email()>
@@ -6,9 +6,18 @@ App\Entity\User:
         address: "@address_<current()>"
         cart: "@cart_<current()>"
         
-    #user_custom:
-    #    username: "exist"
-    #    email: "iexist@myges.fr"
-    #    password: <password()>
-    #    address: "@address_custom"
-    #    cart: "@cart_custom"
+    seller:
+        username: "seller"
+        email: "seller@gmail.com"
+        plainPassword: "seller"
+        roles: ["ROLE_SELLER"]
+        address: "@address_seller"
+        cart: "@cart_seller"
+
+    admin:
+        username: "admin"
+        email: "admin@gmail.com"
+        plainPassword: "admin"
+        roles: ["ROLE_ADMIN"]
+        address: "@address_admin"
+        cart: "@cart_admin"

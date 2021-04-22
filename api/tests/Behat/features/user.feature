@@ -7,8 +7,8 @@ Feature: User
             | order   |
             | user    |
 
-    Scenario: Insert new user
-        When I set payload
+  Scenario: Insert new user and duplicate
+    When I set payload
             """
             {
                 "username": "test1",
@@ -16,8 +16,10 @@ Feature: User
                 "email": "test1@gmail.com"
             }
             """
-        When I request "POST" "/users"
-        Then the response status code should be 201
+    When I request "POST" "/users"
+    Then the response status code should be 201
+    When I request "POST" "/users"
+    Then the response status code should be 500
 
   Scenario: Insert empty user
     When I set payload
@@ -27,7 +29,7 @@ Feature: User
     When I request "POST" "/users"
     Then the response status code should be 500
 
-    Scenario: Insert existing user
+  Scenario: Insert existing user
         When I set payload
             """
             {
@@ -72,7 +74,6 @@ Feature: User
         When I request "POST" "/users"
         Then the response status code should be 400
 
-#Test GET /users
   Scenario: Get list of users
     When I request "GET" "/users"
     Then the response status code should be 200
@@ -111,7 +112,13 @@ Feature: User
     Then I store the result in "userList"
     Given a user with role "Seller"
     When I request "GET" a single data from "userList"
+
+  Scenario: Get a user as an admin
+    Given a user with role "admin"
+    When I request "GET" "/users/{user_1.id}"
     Then the response status code should be 200
+    And The "content-type" header response should exist
+    And The "content-type" header response should be "application/ld+json; charset=utf-8"
 
   Scenario: Get non existing user
     Given a user with role "Admin"

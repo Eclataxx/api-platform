@@ -23,9 +23,9 @@ class DataList
     private function __construct() {
     }
 
-    public function getData(string $list)
+    public function getData(string $list): Array
     {
-        return json_decode($this->data[$list], true)["hydra:member"];
+        return $this->data;
     }
 
     /**
