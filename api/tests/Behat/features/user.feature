@@ -1,12 +1,12 @@
-Feature: REST
+Feature: User
 
   Background:
     Given The fixtures files
-      | user |
-      | cart |
+      | user    |
+      | cart    |
       | product |
       | address |
-      | order |
+      | order   |
 #Test Post /users
   Scenario: Insert new user
     When I set payload
@@ -32,8 +32,8 @@ Feature: REST
     When I set payload
           """
           {
-            "username": "test1",
-            "password": "test",
+            "username": "exist"
+            "email": "iexist@myges.fr"
             "email": "test1@gmail.com"
           }
           """
@@ -45,7 +45,6 @@ Feature: REST
           """
           {
             "username": "test1",
-            "password": "",
             "email": "test1@gmail.com"
           }
           """
@@ -56,7 +55,6 @@ Feature: REST
     When I set payload
           """
           {
-            "username": "",
             "password": "test",
             "email": "test1@gmail.com"
           }
@@ -70,11 +68,10 @@ Feature: REST
           {
             "username": "test1",
             "password": "test",
-            "email": ""
           }
           """
     When I request "POST" "/users"
-    Then the response status code should be 500
+    Then the response status code should be 400
 
 #Test GET /users
   Scenario: Get list of users
@@ -86,4 +83,15 @@ Feature: REST
 
   Scenario: Get restricted data without JWT
     When I request "GET" "/users/9999"
+    Then the response status code should be 401
+
+  Scenario: Get restricted data without JWT
+    When I set payload
+          """
+          {
+            "password": "test2",
+            "email": "test1@gmail.com"
+          }
+          """
+    When I request "PATCH" "/users/9999"
     Then the response status code should be 401

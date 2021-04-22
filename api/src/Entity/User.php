@@ -62,7 +62,7 @@ class User implements UserInterface
     private $username;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="json", nullable=false)
      * @Groups({"user_get_item", "user_get_collection"})
      * @MaxDepth(1)
      */
@@ -70,7 +70,7 @@ class User implements UserInterface
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=false)
      * @Groups({"user_get_item"})
      * @MaxDepth(1)
      */
@@ -79,7 +79,7 @@ class User implements UserInterface
     private $plainPassword;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Groups({"user_get_collection", "user_get_item"})
      * @MaxDepth(1)
      */
