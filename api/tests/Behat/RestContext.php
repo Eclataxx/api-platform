@@ -11,6 +11,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Fidry\AliceDataFixtures\Loader\PersisterLoader;
 use Hautelook\AliceBundle\PhpUnit\BaseDatabaseTrait;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncode;
 
 final class RestContext extends ApiTestCase implements Context
 {
@@ -66,12 +67,33 @@ final class RestContext extends ApiTestCase implements Context
             $options['headers']['Authorization'] = $this->token;
         }
 
-        if ($this->lastPayload) {
+        if ($this->lastPayload && $method != "PATCH") {
             $options['body'] = $this->lastPayload->getRaw();
         }
 
+
         $data = $this->dataList->getData($list);
         $this->lastResponse = $this->createClient()->request($method, $data[0]["@id"], $options);
+    }
+
+    /**
+     * @When I request :method :param from a single data from :list
+     */
+    public function iRequestProductsSingleDataFromList(string $method,string $param, string $list): void
+    {
+        $options = ['headers' => $this->headers];
+
+        if ($this->token) {
+            $options['headers']['Authorization'] = $this->token;
+        }
+
+        if ($this->lastPayload && $method != "PATCH") {
+            $options['body'] = $this->lastPayload->getRaw();
+        }
+
+
+        $data = $this->dataList->getData($list);
+        $this->lastResponse = $this->createClient()->request($method, $data[0]["@id"]."/".$param, $options);
     }
 
     /**
@@ -119,7 +141,7 @@ final class RestContext extends ApiTestCase implements Context
         assertEquals(
             $expectedValue,
             $actualValue,
-            "Asserting the [$property] property in current scope equals [$expectedValue]: ".json_encode($payload)
+            "Asserting the [$property] property in current scope equals [$expectedValue]: " . json_encode($payload)
         );
     }
 
